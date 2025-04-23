@@ -1,37 +1,28 @@
 package com.codewithmosh.store;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
+@RequestMapping("/api")
 public class HomeController {
 
-    @RequestMapping("/")
-    public String index() {
-        return "home.html";
-    }
-
     @PostMapping("/login")
-    public String loginUser(@RequestParam String username,
-                            @RequestParam String password) {
+    public ResponseEntity<?> loginUser(@RequestParam String username,
+                                       @RequestParam String password) {
 
         System.out.println(username);
         System.out.println(password);
         System.out.println();
 
         if (username.equals("serkanınarkakapı") && password.equals("gıcırdıyor")) {
-            return "redirect:/dashboard"; // or return an error page if login fails
+            // You could return a JWT token or a success message
+            return ResponseEntity.ok().body("{\"message\": \"Login successful\"}");
         } else {
-            return "redirect:/?error=true";
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("{\"error\": \"Invalid credentials\"}");
         }
-    }
-
-    @GetMapping("/dashboard")
-    public String showDashboard() {
-        return "dashboard.html";
     }
 }
 
