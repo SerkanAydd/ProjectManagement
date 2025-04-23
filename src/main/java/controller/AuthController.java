@@ -1,7 +1,5 @@
 package controller;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import service.AuthService;
 
@@ -15,12 +13,10 @@ public class AuthController {
     public Map<String, String> authenticateUser(@RequestParam String username,
                                        @RequestParam String password) {
 
-        AuthService authService = new AuthService();
+        AuthService authService = new AuthService(username);
         Map<String, String> userMap = authService.authenticateUser(username, password);
-        System.out.println(userMap);
-        System.out.println("QWEQWEQWEQWE");
-        return userMap;
 
+        return userMap;
     }
 }
 

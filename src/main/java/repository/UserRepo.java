@@ -2,24 +2,32 @@ package repository;
 
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Repository
 public class UserRepo {
-    public UserRepo() {
+    private String username;
 
+    public UserRepo(username) {
+        this.username = username;
     }
 
-    public Map<String, String> fetchUser(String username, String password) {
+    public String getUsername() {
+        return username;
+    }
 
-        Map<String, String> userMap = new HashMap<String, String>();
-        userMap.put("username", "serkan");
-        userMap.put("password", "aydogdu");
-        userMap.put("id", "1");
-        userMap.put("role", "student");
-        userMap.put("token", "ıotyecbeo");
+    public String getPassword() {
+        return username;
+    }
 
-        return userMap;
+    public String getToken() {
+        return username;
+    }
+
+    public String getRole() {
+        return username;
+    }
+
+    public String getId() {
+        return username;
     }
 }
+
