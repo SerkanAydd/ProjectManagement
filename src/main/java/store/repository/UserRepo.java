@@ -14,9 +14,11 @@ public class UserRepo {
 
     public String getPassword(String mail) {
         String password = getPasswordStudent(mail);
+
         if (password == null){
             password = getPasswordStaff(mail);
         }
+
         return password;
     }
 
@@ -70,7 +72,7 @@ public class UserRepo {
     }
 
     private String getStudentId(String mail) {
-        String sql = "SELECT id FROM student WHERE mail = ?";
+        String sql = "SELECT studentid FROM student WHERE mail = ?";
         try {
             return jdbcTemplate.queryForObject(sql, String.class, mail);
         }
@@ -79,7 +81,7 @@ public class UserRepo {
         }
     }
 
-    public String getStaffId(String mail) {
+    private String getStaffId(String mail) {
         String sql = "SELECT id FROM staff WHERE mail = ?";
         try {
             return jdbcTemplate.queryForObject(sql, String.class, mail);
@@ -120,7 +122,7 @@ public class UserRepo {
         }
     }
 
-    public boolean register_student(String mail, String name, String faculty, String department) {
+    public boolean register_student(int id, String mail, String name, String faculty, String department, String password) {
         String sql = "INSERT INTO student (studentid, password, faculty, department, startDate, mail, name, graduationstatus, staff_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         String sql_ = "SELECT id FROM staff WHERE title = ?";
         List<String> advisorid_list = null;
@@ -136,7 +138,7 @@ public class UserRepo {
         int randomAdvisor = Integer.parseInt(random_Advisor);
 
         try {
-            int rowsAffected = jdbcTemplate.update(sql, 31, "itispassword", faculty, department, Date.valueOf("2021-05-31"), mail, name, "Active", randomAdvisor);
+            int rowsAffected = jdbcTemplate.update(sql, id, password, faculty, department, Date.valueOf("2021-05-31"), mail, name, "Active", randomAdvisor);
             return rowsAffected > 0;
         } catch (Exception e) {
             e.printStackTrace(); // You can log or handle this more appropriately
@@ -161,6 +163,12 @@ public class UserRepo {
     public int findMaxStaffId() {
         // COALESCE ensures we get 0 instead of null when the table is empty
         String sql = "SELECT COALESCE(MAX(id), 0) FROM staff";
+        return jdbcTemplate.queryForObject(sql, Integer.class);
+    }
+
+    public int findMaxStudentId() {
+        // COALESCE ensures we get 0 instead of null when the table is empty
+        String sql = "SELECT COALESCE(MAX(id), 0) FROM student";
         return jdbcTemplate.queryForObject(sql, Integer.class);
     }
 

@@ -23,13 +23,13 @@ public class AuthController {
     }
 
     @PostMapping("/register_student")
-    public boolean register(@RequestParam String mail, String name, String faculty, String department) {
-        return authService.register_student(mail, name, faculty, department);
+    public Map<String, String> register(@RequestParam String mail, @RequestParam String name, @RequestParam String faculty, @RequestParam String department, @RequestParam String password) {
+        Map<String, String> accomplish = authService.register_student(mail, name, faculty, department, password);
+        return accomplish;
     }
 
     @PostMapping("/register_staff")
     public Map<String, String> register_staff(@RequestParam String mail, @RequestParam String name,@RequestParam String title, @RequestParam String faculty, @RequestParam String department, @RequestParam String password ) {
-        System.out.println("Came here.");
         Map<String, String> accomplish = authService.register_staff(mail, name, title, faculty, department, password);
         return accomplish;
     }
