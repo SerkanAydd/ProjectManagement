@@ -12,28 +12,55 @@ public class UserRepo {
     private JdbcTemplate jdbcTemplate;
 
     public String getPassword(String mail) {
+        String password = getPasswordStudent(mail);
+        if (password == null){
+            password = getPasswordStaff(mail);
+        }
+        return password;
+    }
+
+    private String getPasswordStudent(String mail) {
 
         String sql = "SELECT password FROM student WHERE mail = ?";
         try {
             return jdbcTemplate.queryForObject(sql, String.class, mail);
-
-        } catch (Exception e) {
-            System.out.println("Error here");
-            // If not found or error, you can log or throw custom exception
+        }
+        catch (Exception e) {
             return null;
         }
     }
 
-    public String getToken(String username) {
-        return username;
+    private String getPasswordStaff(String mail) {
+
+        String sql = "SELECT password FROM staff WHERE mail = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, String.class, mail);
+        }
+        catch (Exception e) {
+            return null;
+        }
     }
 
-    public String getRole(String username) {
-        return username;
+    public String getToken(String mail) {
+        return mail;
+    }
+
+    public String getRole(String mail) {
+
+        String student_password = getPasswordStudent(mail);
+
+        if (student_password != null) {
+            return "Student";
+        } else {
+            String sql = "SELECT title FROM staff WHERE mail = ?";
+            return jdbcTemplate.queryForObject(sql, String.class, mail);
+        }
+
     }
 
     public String getId(String username) {
         return username;
+
     }
 }
 

@@ -18,12 +18,17 @@ public class AuthService {
     public Map<String, String> authenticateUser(String mail, String password) {
 
         String storedHash = userInfo.getPassword(mail);
+        System.out.println(userInfo.getRole(mail));
         if (storedHash == null){
             return null;
         }
 
         if (passwordEncoder.matches(password, storedHash)) {
             String role = userInfo.getRole(mail);
+            System.out.println(role);
+            if (role == null) {
+                System.out.println("role is null");
+            }
             String id = userInfo.getId(mail);
             String token = userInfo.getToken(mail);
 
