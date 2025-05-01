@@ -58,9 +58,65 @@ public class UserRepo {
 
     }
 
-    public String getId(String username) {
-        return username;
+    public String getId(String mail) {
+        String id = getStudentId(mail);
 
+        if (id == null){
+            id = getStaffId(mail);
+        }
+
+        return id;
+    }
+
+    private String getStudentId(String mail) {
+        String sql = "SELECT id FROM student WHERE mail = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, String.class, mail);
+        }
+        catch (Exception e) {
+            return null;
+        }
+    }
+
+    private String getStaffId(String mail) {
+        String sql = "SELECT id FROM staff WHERE mail = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, String.class, mail);
+        }
+        catch (Exception e) {
+            return null;
+        }
+    }
+
+    public String getName(String mail) {
+        String name = getStudentName(mail);
+
+        if (name == null){
+            name = getStaffName(mail);
+        }
+
+        return name;
+    }
+
+    private String getStudentName(String mail) {
+        String sql = "SELECT name FROM student WHERE mail = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, String.class, mail);
+        }
+        catch (Exception e) {
+            return null;
+        }
+    }
+
+    private String getStaffName(String mail) {
+        String sql = "SELECT name FROM staff WHERE mail = ?";
+
+        try {
+            return jdbcTemplate.queryForObject(sql, String.class, mail);
+        }
+        catch (Exception e) {
+            return null;
+        }
     }
 }
 
