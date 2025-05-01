@@ -67,6 +67,37 @@ public class AuthService {
         }
 
         return false;
+    }
+
+    public Map<String, String> register_staff(String mail, String name,String title, String faculty, String department, String password){
+        Resource resource = new ClassPathResource("StaffMails.txt");
+        boolean flag = false;
+        Map<String, String> registerMessage = new HashMap<>();
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(resource.getInputStream()))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (line.equals(mail)) {
+                    if(userInfo.getStaffId(mail) != null){
+                        registerMessage.put("Successful","False");
+                        registerMessage.put("Message", "User already registered.");
+                        return registerMessage;
+                    }else{
+                        int id = userInfo.findMaxStaffId()+1;
+                        String hashedPassword = passwordEncoder.encode(password);
+                        userInfo.register_staff(id,mail, name, title,faculty, department, hashedPassword);
+                        registerMessage.put("Successful", "True");
+                        registerMessage.put("Message", "User successfully registered.");
+                        return registerMessage;
+                    }
+
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        registerMessage.put("Successful", "False");
+        registerMessage.put("Message","User mail is not in database" );
+        return registerMessage;
 
     }
 }

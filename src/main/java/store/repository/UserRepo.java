@@ -79,7 +79,7 @@ public class UserRepo {
         }
     }
 
-    private String getStaffId(String mail) {
+    public String getStaffId(String mail) {
         String sql = "SELECT id FROM staff WHERE mail = ?";
         try {
             return jdbcTemplate.queryForObject(sql, String.class, mail);
@@ -142,7 +142,27 @@ public class UserRepo {
             e.printStackTrace(); // You can log or handle this more appropriately
             return false;
         }
-
     }
+
+    public boolean register_staff(int id, String mail, String name,String title, String faculty, String department, String password){
+        String sql = "INSERT INTO staff (id, mail, name, title, faculty, department, password) VALUES (?, ?, ?, ?, ?, ?,?)";
+        int rows = jdbcTemplate.update(sql,
+                id,
+                mail,
+                name,
+                title,
+                faculty,
+                department,
+                password
+        );
+        return rows > 0;
+    }
+
+    public int findMaxStaffId() {
+        // COALESCE ensures we get 0 instead of null when the table is empty
+        String sql = "SELECT COALESCE(MAX(id), 0) FROM staff";
+        return jdbcTemplate.queryForObject(sql, Integer.class);
+    }
+
 }
 
