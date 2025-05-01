@@ -11,19 +11,14 @@ public class UserRepo {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public List<Map<String, Object>> getAllStudents() {
-        String sql = "SELECT * FROM student";
-        return jdbcTemplate.queryForList(sql);
-    }
+    public String getPassword(String mail) {
 
-    public String getPassword(String username) {
-        int studentid = Integer.parseInt(username);
-
-        String sql = "SELECT password FROM student WHERE studentid = ?";
+        String sql = "SELECT password FROM student WHERE mail = ?";
         try {
-            return jdbcTemplate.queryForObject(sql, String.class, username);
+            return jdbcTemplate.queryForObject(sql, String.class, mail);
 
         } catch (Exception e) {
+            System.out.println("Error here");
             // If not found or error, you can log or throw custom exception
             return null;
         }

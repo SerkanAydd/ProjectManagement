@@ -14,13 +14,10 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/login")
-    public Map<String, String> authenticateUser(@RequestParam String username,
+    public Map<String, String> authenticateUser(@RequestParam String mail,
                                        @RequestParam String password) {
 
-        System.out.println("Eşşek serhat");
-
-        Map<String, String> userMap = authService.authenticateUser(username, password);
-
+        Map<String, String> userMap = authService.authenticateUser(mail, password);
 
         return userMap;
     }
