@@ -3,8 +3,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Date;
 import java.util.List;
-import java.util.Map;
+import java.util.Random;
 
 @Repository
 public class UserRepo {
@@ -117,6 +118,31 @@ public class UserRepo {
         catch (Exception e) {
             return null;
         }
+    }
+
+    public boolean register_student(String mail, String name, String faculty, String department) {
+        String sql = "INSERT INTO student (studentid, password, faculty, department, startDate, mail, name, graduationstatus, staff_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql_ = "SELECT id FROM staff WHERE title = ?";
+        List<String> advisorid_list = null;
+
+        try {
+            advisorid_list = jdbcTemplate.query( sql_, (rs, rowNum) -> rs.getString(1),"Advisor");
+        } catch (Exception e) {
+            return false;
+        }
+
+        Random rand = new Random();
+        String random_Advisor = advisorid_list.get(rand.nextInt(advisorid_list.size()));
+        int randomAdvisor = Integer.parseInt(random_Advisor);
+
+        try {
+            int rowsAffected = jdbcTemplate.update(sql, 31, "itispassword", faculty, department, Date.valueOf("2021-05-31"), mail, name, "Active", randomAdvisor);
+            return rowsAffected > 0;
+        } catch (Exception e) {
+            e.printStackTrace(); // You can log or handle this more appropriately
+            return false;
+        }
+
     }
 }
 

@@ -21,5 +21,10 @@ public class AuthController {
 
         return userMap;
     }
+
+    @PostMapping("/register_student")
+    public boolean register(@RequestParam String mail, String name, String faculty, String department) {
+        return authService.register_student(mail, name, faculty, department);
+    }
 }
 
