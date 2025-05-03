@@ -5,6 +5,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import store.repository.UserRepo;
+import store.util.JwtUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,6 +22,9 @@ public class AuthService {
     @Autowired
     private UserRepo userInfo;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     public Map<String, String> authenticateUser(String mail, String password) {
 
         String storedHash = userInfo.getPassword(mail);
@@ -31,8 +35,9 @@ public class AuthService {
         if (passwordEncoder.matches(password, storedHash)) {
             String role = userInfo.getRole(mail);
             String id = userInfo.getId(mail);
-            String token = userInfo.getToken(mail);
             String name = userInfo.getName(mail);
+
+            String token = jwtUtil.generateToken(mail, role); // for token
 
             Map<String, String> userMap = new HashMap<>();
             userMap.put("role", role);
@@ -48,6 +53,12 @@ public class AuthService {
 
             return null;
         }
+    }
+
+    public boolean isTokenValid(String token)
+    {
+        String extractedMail = jwtUtil.extractMail(token);
+        return (jwtUtil.isTokenValid(token, extractedMail));
     }
 
     public Map<String, String> register_student(String mail, String name, String faculty, String department, String password) {

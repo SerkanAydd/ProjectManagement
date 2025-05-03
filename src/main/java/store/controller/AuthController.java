@@ -22,6 +22,13 @@ public class AuthController {
         return userMap;
     }
 
+    @PostMapping("/validate-token")
+    public boolean validateToken(String authHeader)
+    {
+        String token = authHeader.replace("Bearer ", "");
+        return authService.isTokenValid(token);
+    }
+
     @PostMapping("/register_student")
     public Map<String, String> register(@RequestParam String mail, @RequestParam String name, @RequestParam String faculty, @RequestParam String department, @RequestParam String password) {
         Map<String, String> accomplish = authService.register_student(mail, name, faculty, department, password);
@@ -35,4 +42,3 @@ public class AuthController {
     }
 
 }
-
