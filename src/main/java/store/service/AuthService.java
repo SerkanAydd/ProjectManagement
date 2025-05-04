@@ -28,14 +28,24 @@ public class AuthService {
     private JwtUtil jwtUtil;
 
     public Map<String, String> authenticateUser(String mail, String password) {
+        System.out.println(new BCryptPasswordEncoder().encode("itispassword"));
+        Map<String, String> response = new HashMap<>();
         String storedHash = userInfo.getPassword(mail);
 
+        System.out.println("DEBUG: getPassword returned => " + storedHash);
+
         if (storedHash == null) {
-            throw new IllegalArgumentException("User not found: No user registered with this email");
+            response.put("error", "User not found: No user registered with this email");
+            return response;
         }
 
+        System.out.println("Password entered   : [" + password + "]");
+        System.out.println("Password from DB   : [" + storedHash + "]");
+        System.out.println("Match result       : " + passwordEncoder.matches(password, storedHash));
+
         if (!passwordEncoder.matches(password, storedHash)) {
-            throw new IllegalArgumentException("Incorrect password: Password does not match");
+            response.put("error", "Incorrect password");
+            return response;
         }
 
         String role = userInfo.getRole(mail);

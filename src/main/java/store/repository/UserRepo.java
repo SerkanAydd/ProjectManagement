@@ -1,21 +1,23 @@
 package store.repository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
 
 import java.sql.Date;
 import java.util.List;
 import java.util.Random;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+
 @Repository
 public class UserRepo {
+
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
     public String getPassword(String mail) {
         String password = getPasswordStudent(mail);
 
-        if (password == null){
+        if (password == null) {
             password = getPasswordStaff(mail);
         }
 
@@ -27,19 +29,17 @@ public class UserRepo {
         String sql = "SELECT password FROM student WHERE mail = ?";
         try {
             return jdbcTemplate.queryForObject(sql, String.class, mail);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return null;
         }
     }
 
     private String getPasswordStaff(String mail) {
-
         String sql = "SELECT password FROM staff WHERE mail = ?";
         try {
             return jdbcTemplate.queryForObject(sql, String.class, mail);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
+            System.err.println("Error in getPasswordStaff: " + e.getMessage());
             return null;
         }
     }
@@ -64,7 +64,7 @@ public class UserRepo {
     public String getId(String mail) {
         String id = getStudentId(mail);
 
-        if (id == null){
+        if (id == null) {
             id = getStaffId(mail);
         }
 
@@ -75,8 +75,7 @@ public class UserRepo {
         String sql = "SELECT studentid FROM student WHERE mail = ?";
         try {
             return jdbcTemplate.queryForObject(sql, String.class, mail);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -85,8 +84,7 @@ public class UserRepo {
         String sql = "SELECT id FROM staff WHERE mail = ?";
         try {
             return jdbcTemplate.queryForObject(sql, String.class, mail);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -94,7 +92,7 @@ public class UserRepo {
     public String getName(String mail) {
         String name = getStudentName(mail);
 
-        if (name == null){
+        if (name == null) {
             name = getStaffName(mail);
         }
 
@@ -105,8 +103,7 @@ public class UserRepo {
         String sql = "SELECT name FROM student WHERE mail = ?";
         try {
             return jdbcTemplate.queryForObject(sql, String.class, mail);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -116,8 +113,7 @@ public class UserRepo {
 
         try {
             return jdbcTemplate.queryForObject(sql, String.class, mail);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -128,7 +124,7 @@ public class UserRepo {
         List<String> advisorid_list = null;
 
         try {
-            advisorid_list = jdbcTemplate.query( sql_, (rs, rowNum) -> rs.getString(1),"Advisor");
+            advisorid_list = jdbcTemplate.query(sql_, (rs, rowNum) -> rs.getString(1), "Advisor");
         } catch (Exception e) {
             return false;
         }
@@ -146,7 +142,7 @@ public class UserRepo {
         }
     }
 
-    public boolean register_staff(int id, String mail, String name,String title, String faculty, String department, String password){
+    public boolean register_staff(int id, String mail, String name, String title, String faculty, String department, String password) {
         String sql = "INSERT INTO staff (id, mail, name, title, faculty, department, password) VALUES (?, ?, ?, ?, ?, ?,?)";
         int rows = jdbcTemplate.update(sql,
                 id,
@@ -173,4 +169,3 @@ public class UserRepo {
     }
 
 }
-
