@@ -168,7 +168,7 @@ public class UserRepo {
 
     public int findMaxStudentId() {
         // COALESCE ensures we get 0 instead of null when the table is empty
-        String sql = "SELECT COALESCE(MAX(id), 0) FROM student";
+        String sql = "SELECT COALESCE(MAX(studentid), 0) FROM student";
         return jdbcTemplate.queryForObject(sql, Integer.class);
     }
 
