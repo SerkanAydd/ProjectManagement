@@ -3,6 +3,8 @@ package store.controller;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,12 +22,24 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/login")
-    public Map<String, String> authenticateUser(@RequestParam String mail,
-            @RequestParam String password) {
+    public ResponseEntity<?> authenticateUser(@RequestParam String mail, @RequestParam String password) {
+        try {
+            Map<String, String> userMap = authService.authenticateUser(mail, password);
 
-        Map<String, String> userMap = authService.authenticateUser(mail, password);
+            if (userMap == null || userMap.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                        "error", "Invalid email or password"
+                ));
+            }
 
-        return userMap;
+            return ResponseEntity.ok(userMap);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                    "error", "An error occurred while processing login",
+                    "details", e.getMessage()
+            ));
+        }
     }
 
     @PostMapping("/validate-token")
