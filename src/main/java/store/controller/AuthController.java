@@ -25,18 +25,15 @@ public class AuthController {
     public ResponseEntity<?> authenticateUser(@RequestParam String mail, @RequestParam String password) {
         try {
             Map<String, String> userMap = authService.authenticateUser(mail, password);
-
-            if (userMap == null || userMap.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
-                        "error", "Invalid email or password"
-                ));
-            }
-
             return ResponseEntity.ok(userMap);
 
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                    "error", e.getMessage()
+            ));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
-                    "error", "An error occurred while processing login",
+                    "error", "Unexpected server error",
                     "details", e.getMessage()
             ));
         }

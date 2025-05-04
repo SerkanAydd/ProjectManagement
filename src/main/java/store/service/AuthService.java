@@ -28,17 +28,14 @@ public class AuthService {
     private JwtUtil jwtUtil;
 
     public Map<String, String> authenticateUser(String mail, String password) {
-        Map<String, String> response = new HashMap<>();
         String storedHash = userInfo.getPassword(mail);
 
         if (storedHash == null) {
-            response.put("error", "User not found");
-            return response;
+            throw new IllegalArgumentException("User not found: No user registered with this email");
         }
 
         if (!passwordEncoder.matches(password, storedHash)) {
-            response.put("error", "Incorrect password");
-            return response;
+            throw new IllegalArgumentException("Incorrect password: Password does not match");
         }
 
         String role = userInfo.getRole(mail);
@@ -46,13 +43,14 @@ public class AuthService {
         String name = userInfo.getName(mail);
         String token = jwtUtil.generateToken(mail, role);
 
-        response.put("role", role);
-        response.put("mail", mail);
-        response.put("id", id);
-        response.put("token", token);
-        response.put("name", name);
+        Map<String, String> userMap = new HashMap<>();
+        userMap.put("role", role);
+        userMap.put("mail", mail);
+        userMap.put("id", id);
+        userMap.put("token", token);
+        userMap.put("name", name);
 
-        return response;
+        return userMap;
     }
 
     public boolean isTokenValid(String token) {
