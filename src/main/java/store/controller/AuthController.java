@@ -44,15 +44,38 @@ public class AuthController {
     }
 
     @PostMapping("/register_student")
-    public Map<String, String> register(@RequestParam String mail, @RequestParam String name, @RequestParam String faculty, @RequestParam String department, @RequestParam String password) {
-        Map<String, String> accomplish = authService.register_student(mail, name, faculty, department, password);
-        return accomplish;
+    public ResponseEntity<?> registerStudent(
+            @RequestParam String mail,
+            @RequestParam String name,
+            @RequestParam String faculty,
+            @RequestParam String department,
+            @RequestParam String password) {
+
+        Map<String, String> response = authService.register_student(mail, name, faculty, department, password);
+
+        if ("True".equals(response.get("Successful"))) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
     }
 
     @PostMapping("/register_staff")
-    public Map<String, String> register_staff(@RequestParam String mail, @RequestParam String name, @RequestParam String title, @RequestParam String faculty, @RequestParam String department, @RequestParam String password) {
-        Map<String, String> accomplish = authService.register_staff(mail, name, title, faculty, department, password);
-        return accomplish;
+    public ResponseEntity<?> registerStaff(
+            @RequestParam String mail,
+            @RequestParam String name,
+            @RequestParam String title,
+            @RequestParam String faculty,
+            @RequestParam String department,
+            @RequestParam String password) {
+
+        Map<String, String> response = authService.register_staff(mail, name, title, faculty, department, password);
+
+        if ("True".equals(response.get("Successful"))) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
     }
 
 }
