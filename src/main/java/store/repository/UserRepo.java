@@ -143,12 +143,15 @@ public class UserRepo {
     }
 
     public boolean register_staff(int id, String mail, String name, String title, String faculty, String department, String password) {
-        String sql = "INSERT INTO staff (id, mail, name, title, faculty, department, password) VALUES (?, ?, ?, ?, ?, ?,?)";
+        // Replace all spaces with underscores in the title
+        String normalizedTitle = title.replace(" ", "_");
+
+        String sql = "INSERT INTO staff (id, mail, name, title, faculty, department, password) VALUES (?, ?, ?, ?, ?, ?, ?)";
         int rows = jdbcTemplate.update(sql,
                 id,
                 mail,
                 name,
-                title,
+                normalizedTitle,
                 faculty,
                 department,
                 password
