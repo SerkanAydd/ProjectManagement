@@ -49,3 +49,12 @@ staff48@iyte.edu.tr
 staff49@iyte.edu.tr
 staff50@iyte.edu.tr
 serhat_staff@iyte.edu.tr
+advisortest1@iyte.edu.tr
+advisortest2@iyte.edu.tr
+advisortest3@iyte.edu.tr
+secretarytest1@iyte.edu.tr
+secretarytest2@iyte.edu.tr
+secretarytest3@iyte.edu.tr
+studentaffairtest1@iyte.edu.tr
+studentaffairtest2@iyte.edu.tr
+studentaffairtest3@iyte.edu.tr

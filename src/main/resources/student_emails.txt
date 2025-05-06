@@ -21,3 +21,8 @@ ceren.guler@std.iyte.edu.tr
 serhat.uludag@std.iyte.edu.tr
 serhat.test1@std.iyte.edu.tr
 serhat.test12@std.iyte.edu.tr
+ogrencitest1@std.iyte.edu.tr
+ogrencitest2@std.iyte.edu.tr
+ogrencitest3@std.iyte.edu.tr
+ogrencitest4@std.iyte.edu.tr
+ogrencitest5@std.iyte.edu.tr
