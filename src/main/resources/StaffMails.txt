@@ -59,3 +59,9 @@ studentaffairtest1@iyte.edu.tr
 studentaffairtest2@iyte.edu.tr
 studentaffairtest3@iyte.edu.tr
 studentaffairtest4@iyte.edu.tr
+advisortest11@iyte.edu.tr
+advisortest12@iyte.edu.tr
+secretarytest11@iyte.edu.tr
+secretarytest12@iyte.edu.tr
+studentaffairtest11@iyte.edu.tr
+studentaffairtest12@iyte.edu.tr
