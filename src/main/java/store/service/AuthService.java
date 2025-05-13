@@ -68,7 +68,7 @@ public class AuthService {
         return jwtUtil.isTokenValid(token, extractedMail);
     }
 
-    public Map<String, String> register_student(String mail, String name, String faculty, String department, String password) {
+    public Map<String, String> register_student(String mail, String name, String faculty, String department, String password, String studentId) {
         Resource resource = new ClassPathResource("student_emails.txt");
         Map<String, String> registerMessage = new HashMap<>();
 
@@ -81,9 +81,8 @@ public class AuthService {
                         registerMessage.put("Message", "User already registered.");
                         return registerMessage;
                     } else {
-                        int id = userInfo.findMaxStudentId() + 1;
                         String hashedPassword = passwordEncoder.encode(password);
-                        userInfo.register_student(id, mail, name, faculty, department, hashedPassword);
+                        userInfo.register_student(Integer.parseInt(studentId), mail, name, faculty, department, hashedPassword);
                         registerMessage.put("Successful", "True");
                         registerMessage.put("Message", "User successfully registered.");
                         return registerMessage;
