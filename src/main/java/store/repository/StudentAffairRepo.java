@@ -17,9 +17,9 @@ public class StudentAffairRepo {
         String sql = "SELECT * FROM student";
         return jdbcTemplate.query(sql, (rs, rowNum) -> new Student(
                 rs.getInt("studentid"),
+                rs.getString("name"),
                 rs.getString("faculty"),
-                rs.getString("department"),
-                rs.getString("name")
+                rs.getString("department")
         ));
     }
 }

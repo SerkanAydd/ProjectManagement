@@ -16,13 +16,8 @@ public class StudentAffairService {
     public int downloadAllDiplomas() {
         List<Student> studentList = studentAffairRepo.getAllStudents();
 
-        for (Student student : studentList) {
-            System.out.println("ID: " + student.getStudentid());
-            System.out.println("Name: " + student.getName());
-            System.out.println("Faculty: " + student.getFaculty());
-            System.out.println("Department: " + student.getDepartment());
-            System.out.println("----------");
-        }
+        String outputPath = "students.pdf";
+        PdfGenerator.createStudentPdf(studentList, outputPath);
 
         return 0;
     }
