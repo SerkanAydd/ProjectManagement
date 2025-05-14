@@ -1,9 +1,5 @@
 package store.util;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -11,35 +7,26 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.text.PDFTextStripper;
+import store.model.ParsedTranscript;
 
 public class TranscriptParser {
 
-    public static void main(String[] args) throws IOException {
-        File file = new File("src/main/resources/290201051_transcript.pdf"); // path to your PDF
-        String text = extractTextFromPdf(file);
-        System.out.println("=== Raw Extracted Text ===\n" + text);
+    public static ParsedTranscript parseTranscript(String text) {
+        int studentId = extractStudentNumber(text);
+        List<String> courseCodes = extractCourseCodes(text);
+        int totalCredits = extractTotalCredits(text);
+        double gpa = extractGPA(text);
+        int semesterCount = countSemesters(text);
 
-        System.out.println("\n=== Parsed Transcript Data ===");
-        System.out.println("Student No      : " + extractStudentNumber(text));
-        System.out.println("Course Codes    : " + extractCourseCodes(text));
-        System.out.println("Total Credits   : " + extractTotalCredits(text));
-        System.out.println("GPA (GNO)       : " + extractGPA(text));
-        System.out.println("Date            : " + LocalDate.now());
-        System.out.println("Semester Number : " + countSemesters(text));
+        return new ParsedTranscript(studentId, courseCodes, totalCredits, gpa, semesterCount);
     }
 
-    private static String extractTextFromPdf(File file) throws IOException {
-        try (PDDocument document = PDDocument.load(new FileInputStream(file))) {
-            PDFTextStripper stripper = new PDFTextStripper();
-            return stripper.getText(document);
-        }
-    }
-
-    private static String extractStudentNumber(String text) {
+    private static int extractStudentNumber(String text) {
         Matcher matcher = Pattern.compile("Öğrenci No\\s*:\\s*(\\d+)").matcher(text);
-        return matcher.find() ? matcher.group(1) : "Not found";
+        if (matcher.find()) {
+            return Integer.parseInt(matcher.group(1));
+        }
+        throw new IllegalArgumentException("Student number not found");
     }
 
     private static List<String> extractCourseCodes(String text) {
@@ -67,7 +54,7 @@ public class TranscriptParser {
             lastGpa = matcher.group(1);
         }
         if (lastGpa == null) {
-            return -1;
+            throw new IllegalArgumentException("GPA not found");
         }
         return Double.parseDouble(lastGpa.replace(',', '.'));
     }

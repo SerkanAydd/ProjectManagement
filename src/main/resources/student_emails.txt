@@ -28,3 +28,6 @@ ogrencitest4@std.iyte.edu.tr
 ogrencitest5@std.iyte.edu.tr
 ogrencitest11@std.iyte.edu.tr
 ogrencitest12@std.iyte.edu.tr
+candeniz@std.iyte.edu.tr
+suludag@std.iyte.edu.tr
+serkanaydogdu@std.iyte.edu.tr
