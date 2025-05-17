@@ -1,6 +1,7 @@
 package store.repository;
 
 import java.sql.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -8,6 +9,7 @@ import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+
 
 @Repository
 public class UserRepo {
@@ -179,5 +181,30 @@ public class UserRepo {
         String sql = "SELECT coursecode FROM course_curriculum WHERE curriculumid = ?";
         return jdbcTemplate.queryForList(sql, String.class, curriculumId);        
     }
+
+    public List<Map<String, String>> findStudentNamesAndApprovalsByAdvisorId(Long advisorUserId) {
+    String sql = "SELECT name, approval FROM student WHERE staff_id = ?";
+    return jdbcTemplate.query(sql, (rs, rowNum) -> {
+        Map<String, String> row = new HashMap<>();
+        row.put("name", rs.getString("name"));
+        row.put("approval", rs.getString("approval"));
+        return row;
+    }, advisorUserId);
+    }
+
+    public int updateGraduationStatusPairs(Long staffId, List<Map<String, String>> updates) {
+        String sql = "UPDATE student SET approval = ? WHERE staff_id = ? AND name = ?";
+        int totalUpdated = 0;
+
+        for (Map<String, String> update : updates) {
+            String name = update.get("name");
+            String status = update.get("status");
+            int updated = jdbcTemplate.update(sql, status, staffId, name);
+            totalUpdated += updated;
+        }
+
+        return totalUpdated;
+    }   
+
 
 }

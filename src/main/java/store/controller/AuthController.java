@@ -6,7 +6,10 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -99,5 +102,35 @@ public class AuthController {
             ));
         }
     }
+        @GetMapping("/students/by-advisor/{advisorId}")
+        public ResponseEntity<List<Map<String, String>>> getStudentsByAdvisor(@PathVariable Long advisorId) {
+            List<Map<String, String>> students = authService.getStudentsByAdvisor(advisorId);
+            return ResponseEntity.ok(students);
+        }
+
+   @PostMapping("/update-approvals")
+public ResponseEntity<?> updateApprovalsBulk(
+        @RequestParam Long staffId,
+        @RequestBody List<Map<String, String>> updates) {
+
+    try {
+        int updatedCount = authService.updateMultipleStudentStatuses(staffId, updates);
+
+        return ResponseEntity.ok(Map.of(
+            "updated", updatedCount,
+            "message", "Approval statuses updated successfully"
+        ));
+
+    } catch (IllegalArgumentException e) {
+        return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+            "error", "Unexpected error",
+            "details", e.getMessage()
+        ));
+    }
+}
+ 
+    
 
 }

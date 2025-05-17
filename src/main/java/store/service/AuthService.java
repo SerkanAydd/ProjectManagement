@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -133,13 +134,28 @@ public class AuthService {
 
     public List<String> vievCurriculum(String department) {
         Integer curriculumId = userInfo.takeCurriculumid(department);
-        
-
         if (curriculumId == null) {
             return Collections.singletonList("Curriculum does not exist");
         }
-
         List<String> curriculum =userInfo.viewCurriculum(curriculumId);
         return curriculum;
         }
+
+    public List<Map<String, String>> getStudentsByAdvisor(Long advisorUserId) {
+        return userInfo.findStudentNamesAndApprovalsByAdvisorId(advisorUserId);
+    }
+    public int updateMultipleStudentStatuses(Long staffId, List<Map<String, String>> updates) {
+        for (Map<String, String> update : updates) {
+            String status = update.get("status");
+            if (!status.equals("Approved") && !status.equals("Rejected")) {
+                throw new IllegalArgumentException("Invalid status: " + status);
+            }
+        }
+
+        return userInfo.updateGraduationStatusPairs(staffId, updates);
+    }
+
+
+
+
 }
