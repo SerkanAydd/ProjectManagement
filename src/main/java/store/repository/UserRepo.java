@@ -2,6 +2,7 @@ package store.repository;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -169,6 +170,14 @@ public class UserRepo {
         // COALESCE ensures we get 0 instead of null when the table is empty
         String sql = "SELECT COALESCE(MAX(studentid), 0) FROM student";
         return jdbcTemplate.queryForObject(sql, Integer.class);
+    }
+    public Integer takeCurriculumid(String department){
+        String sql = "SELECT curriculumid FROM curriculum WHERE department = ?";
+        return jdbcTemplate.queryForObject(sql, Integer.class, department);        
+    }
+    public List<String> viewCurriculum(int curriculumId){
+        String sql = "SELECT coursecode FROM course_curriculum WHERE curriculumid = ?";
+        return jdbcTemplate.queryForList(sql, String.class, curriculumId);        
     }
 
 }

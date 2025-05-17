@@ -4,8 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
+import java.util.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -129,4 +130,16 @@ public class AuthService {
         registerMessage.put("Message", "User mail is not in database");
         return registerMessage;
     }
+
+    public List<String> vievCurriculum(String department) {
+        Integer curriculumId = userInfo.takeCurriculumid(department);
+        
+
+        if (curriculumId == null) {
+            return Collections.singletonList("Curriculum does not exist");
+        }
+
+        List<String> curriculum =userInfo.viewCurriculum(curriculumId);
+        return curriculum;
+        }
 }

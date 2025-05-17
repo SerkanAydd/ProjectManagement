@@ -1,5 +1,6 @@
 package store.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,6 +76,27 @@ public class AuthController {
             return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    @PostMapping("/viewCurriculum")
+    public ResponseEntity<?> vievCurriculum(@RequestParam String department) {
+        try {
+            List<String> userMap = authService.vievCurriculum(department);
+            return ResponseEntity.ok(userMap);
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                    "error", e.getMessage()
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                    "error", "Unable to load \r\n" + //
+                                                "curriculum. \r\n" + //
+                                                "Please try again \r\n" + //
+                                                "later.",
+                    "details", e.getMessage()
+            ));
         }
     }
 
