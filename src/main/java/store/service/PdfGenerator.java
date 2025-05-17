@@ -9,13 +9,38 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import store.entity.Student;
-
+import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
 public class PdfGenerator {
 
-    public static void createStudentPdf(List<Student> students, String outputPath) {
+    public static boolean createStudentPdf(List<Student> students) {
+
+        String folderName = "diplomas";
+        File folder = new File(folderName);
+        
+        if (folder.exists() && folder.isDirectory()) {
+            deleteFolderRecursively(folder);
+            System.out.println("Existing folder deleted.");
+        } else {
+            System.out.println("No existing folder found.");
+        }
+
+        String folderNameWithZip = "diplomas.zip";
+        File folderWithZip = new File(folderNameWithZip);
+
+        if (folderWithZip.exists()) {
+            folderWithZip.delete();
+            System.out.println("Existing ZIP file deleted.");
+        }
+
+
+        boolean success = folder.mkdir();   
+        if (!success) {
+            System.out.println("Does here return ?");
+            return false;
+        }
 
         for (Student student : students) {
             String outputPath_ =  "diplomas/" + student.getStudentid() + ".pdf";
@@ -49,7 +74,6 @@ public class PdfGenerator {
                 } else if (faculty_name_tr.equals("Architect")) {
                     faculty_name_tr = "Mimarlik";
                 } else {
-
                 }
 
                 Paragraph faculty = new Paragraph(faculty_name_tr).setFontSize(9);
@@ -86,7 +110,38 @@ public class PdfGenerator {
                 document.close();
             } catch (Exception e) {
                 e.printStackTrace();
+                return false;
             }
         }
+
+        try {
+            String zipFileName = "diplomas.zip";
+            String command = String.format(
+                "powershell Compress-Archive -Path diplomas -DestinationPath %s -Force", zipFileName
+            );
+
+            Process zipProcess = Runtime.getRuntime().exec(command);
+            zipProcess.waitFor(); // Wait for zipping to complete
+            System.out.println("Folder successfully zipped to " + zipFileName);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to zip the folder.");
+            return false;
+        }       
+    }
+
+    public static void deleteFolderRecursively(File folder) {
+        File[] files = folder.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    deleteFolderRecursively(file);
+                } else {
+                    file.delete();
+                }
+            }
+        }
+        folder.delete();
     }
 }

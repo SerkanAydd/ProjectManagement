@@ -13,12 +13,13 @@ public class StudentAffairService {
     @Autowired
     private StudentAffairRepo studentAffairRepo;
 
-    public int downloadAllDiplomas() {
+    public boolean downloadAllDiplomas() {
         List<Student> studentList = studentAffairRepo.getAllStudents();
-
-        String outputPath = "students.pdf";
-        PdfGenerator.createStudentPdf(studentList, outputPath);
-
-        return 0;
+        boolean success = PdfGenerator.createStudentPdf(studentList);
+        if (success) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
