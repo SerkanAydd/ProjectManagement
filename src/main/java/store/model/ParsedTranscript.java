@@ -4,11 +4,11 @@ import java.util.List;
 
 public class ParsedTranscript {
 
-    private int studentId;
-    private List<String> courseCodes;
-    private int totalCredits;
-    private double gpa;
-    private int semesterNumber;
+    private final int studentId;
+    private final List<String> courseCodes;
+    private final int totalCredits;
+    private final double gpa;
+    private final int semesterNumber;
 
     public ParsedTranscript(int studentId, List<String> courseCodes, int totalCredits, double gpa, int semesterNumber) {
         this.studentId = studentId;

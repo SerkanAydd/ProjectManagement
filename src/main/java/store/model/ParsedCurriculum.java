@@ -4,11 +4,11 @@ import java.util.List;
 
 public class ParsedCurriculum {
 
-    private String faculty;
-    private String department;
-    private int techElectiveCount;
-    private int socialElectiveCount;
-    private List<String[]> courses; // each course: [code, category]
+    private final String faculty;
+    private final String department;
+    private final int techElectiveCount;
+    private final int socialElectiveCount;
+    private final List<String[]> courses; // each course: [code, category]
 
     public ParsedCurriculum(String faculty, String department, int techElectiveCount, int socialElectiveCount, List<String[]> courses) {
         this.faculty = faculty;
