@@ -12,6 +12,10 @@ import store.entity.Student;
 import java.io.File;
 import java.io.InputStream;
 import java.util.List;
+import java.io.*;
+import java.util.zip.*;
+
+
 
 public class PdfGenerator {
 
@@ -113,22 +117,12 @@ public class PdfGenerator {
                 return false;
             }
         }
-
-        try {
-            String zipFileName = "diplomas.zip";
-            String command = String.format(
-                "powershell Compress-Archive -Path diplomas -DestinationPath %s -Force", zipFileName
-            );
-
-            Process zipProcess = Runtime.getRuntime().exec(command);
-            zipProcess.waitFor(); // Wait for zipping to complete
-            System.out.println("Folder successfully zipped to " + zipFileName);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Failed to zip the folder.");
-            return false;
-        }       
+        
+        boolean successful = zipDiplomasFolder();
+        
+        return successful;
+        
+        
     }
 
     public static void deleteFolderRecursively(File folder) {
@@ -143,5 +137,48 @@ public class PdfGenerator {
             }
         }
         folder.delete();
+    }
+
+
+
+    public static boolean zipDiplomasFolder() {
+        String sourceFolder = "diplomas";
+        String zipFilePath = "diplomas.zip";
+
+        File folder = new File(sourceFolder);
+        File[] files = folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".pdf"));
+
+        if (files == null || files.length == 0) {
+            System.out.println("No PDF files found in the diplomas folder.");
+            return false;
+        }
+
+        try (
+            FileOutputStream fos = new FileOutputStream(zipFilePath);
+            ZipOutputStream zos = new ZipOutputStream(fos)
+        ) {
+            for (File file : files) {
+                try (FileInputStream fis = new FileInputStream(file)) {
+                    ZipEntry zipEntry = new ZipEntry(file.getName());
+                    zos.putNextEntry(zipEntry);
+
+                    byte[] buffer = new byte[1024];
+                    int len;
+                    while ((len = fis.read(buffer)) > 0) {
+                        zos.write(buffer, 0, len);
+                    }
+
+                    zos.closeEntry();
+                }
+            }
+
+            System.out.println("Successfully zipped PDFs into " + zipFilePath);
+            return true;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Zipping failed.");
+            return false;
+        }
     }
 }
