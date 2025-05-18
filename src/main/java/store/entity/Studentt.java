@@ -1,12 +1,12 @@
 package store.entity;
 
-public class Student {
+public class Studentt {
     private int studentid;
     private String name;
     private String faculty;
     private String department;
 
-    public Student(int studentid, String name, String faculty, String department) {
+    public Studentt(int studentid, String name, String faculty, String department) {
         this.studentid = studentid;
         this.name = name;
         this.faculty = faculty;

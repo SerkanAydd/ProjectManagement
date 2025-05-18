@@ -8,7 +8,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
-import store.entity.Student;
+import store.entity.Studentt;
 import java.io.File;
 import java.io.InputStream;
 import java.util.List;
@@ -19,7 +19,7 @@ import java.util.zip.*;
 
 public class PdfGenerator {
 
-    public static boolean createStudentPdf(List<Student> students) {
+    public static boolean createStudentPdf(List<Studentt> students) {
 
         String folderName = "diplomas";
         File folder = new File(folderName);
@@ -46,7 +46,7 @@ public class PdfGenerator {
             return false;
         }
 
-        for (Student student : students) {
+        for (Studentt student : students) {
             String outputPath_ =  "diplomas/" + student.getStudentid() + ".pdf";
 
             try {
