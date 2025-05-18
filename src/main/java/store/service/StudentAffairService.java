@@ -17,8 +17,10 @@ public class StudentAffairService {
         List<Student> studentList = studentAffairRepo.getAllStudents();
         boolean success = PdfGenerator.createStudentPdf(studentList);
         if (success) {
+            System.out.println("SUCCESSFULL");
             return true;
         } else {
+            System.out.println("UNSUCCESSFULL");
             return false;
         }
     }

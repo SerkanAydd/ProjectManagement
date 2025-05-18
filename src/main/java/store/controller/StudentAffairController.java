@@ -29,7 +29,7 @@ public class StudentAffairController {
             File zipFile = new File("diplomas.zip");
 
             if (!zipFile.exists()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Generated zip file not found.");
             }
 
             FileSystemResource resource = new FileSystemResource(zipFile);
