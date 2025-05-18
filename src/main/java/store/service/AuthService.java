@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import store.entity.Student;
 import store.repository.UserRepo;
 import store.util.JwtUtil;
 
@@ -131,6 +129,5 @@ public class AuthService {
         registerMessage.put("Message", "User mail is not in database");
         return registerMessage;
     }
-
 
 }
