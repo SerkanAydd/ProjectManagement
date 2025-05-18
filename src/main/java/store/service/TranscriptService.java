@@ -61,6 +61,15 @@ public class TranscriptService {
         ParsedTranscript parsed;
         try {
             parsed = TranscriptParser.parseTranscript(text);
+
+            // ⬇️ Debug çıktısı buraya
+            System.out.println("Transcript Parsed:");
+            System.out.println("Student ID: " + parsed.getStudentId());
+            System.out.println("Courses: " + parsed.getCourseCodes());
+            System.out.println("Total Credits: " + parsed.getTotalCredits());
+            System.out.println("GPA: " + parsed.getGpa());
+            System.out.println("Semester Count: " + parsed.getSemesterNumber());
+
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Failed to parse transcript: " + e.getMessage());
         } catch (Exception e) {

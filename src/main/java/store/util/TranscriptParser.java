@@ -13,10 +13,19 @@ public class TranscriptParser {
 
     public static ParsedTranscript parseTranscript(String text) {
         int studentId = extractStudentNumber(text);
-        List<String> courseCodes = extractCourseCodes(text);
+        List<String> courseCodes = extractPassedCourseCodes(text);
         int totalCredits = extractTotalCredits(text);
         double gpa = extractGPA(text);
         int semesterCount = countSemesters(text);
+
+        // ✅ DEBUG LOG
+        System.out.println("========== Parsed Transcript ==========");
+        System.out.println("Student ID     : " + studentId);
+        System.out.println("Course Codes   : " + courseCodes);
+        System.out.println("Total Credits  : " + totalCredits);
+        System.out.println("GPA            : " + gpa);
+        System.out.println("Semester Count : " + semesterCount);
+        System.out.println("========================================");
 
         return new ParsedTranscript(studentId, courseCodes, totalCredits, gpa, semesterCount);
     }
@@ -29,13 +38,70 @@ public class TranscriptParser {
         throw new IllegalArgumentException("Student number not found");
     }
 
-    private static List<String> extractCourseCodes(String text) {
-        Matcher matcher = Pattern.compile("\\b[A-Z]{3,4}\\d{3}\\b").matcher(text);
-        Set<String> codes = new LinkedHashSet<>();
-        while (matcher.find()) {
-            codes.add(matcher.group());
+    private static List<String> extractPassedCourseCodes(String text) {
+        String[] lines = text.split("\r?\n");
+        Set<String> passedCourses = new LinkedHashSet<>();
+
+        Pattern courseCodePattern = Pattern.compile("([A-Z]{3,4}\\d{3})");
+        Pattern gradePattern = Pattern.compile("\\b(AA|BA|BB|CB|CC|DC|DD|S|FD|FF|NA|DZ|FG)\\b");
+
+        // Known kredisiz dersler
+        Set<String> nonCreditCourses = Set.of("TURK201", "TURK202", "HIST201", "HIST202", "GCC101");
+
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[i].trim();
+            Matcher codeMatcher = courseCodePattern.matcher(line);
+
+            if (codeMatcher.find()) {
+                String currentCourseCode = codeMatcher.group(1);
+                String grade = null;
+                int courseIndex = line.indexOf(currentCourseCode);
+                int gradeIndex = -1;
+
+                // Same line grade check
+                Matcher gradeMatcher = gradePattern.matcher(line);
+                if (gradeMatcher.find()) {
+                    grade = gradeMatcher.group(1);
+                    gradeIndex = line.indexOf(grade);
+                } else if (i + 1 < lines.length) {
+                    // Next line grade check
+                    String nextLine = lines[i + 1].trim();
+                    Matcher nextCodeMatcher = courseCodePattern.matcher(nextLine);
+                    if (!nextCodeMatcher.lookingAt()) {
+                        Matcher nextGradeMatcher = gradePattern.matcher(nextLine);
+                        if (nextGradeMatcher.find()) {
+                            grade = nextGradeMatcher.group(1);
+                            gradeIndex = nextLine.indexOf(grade);
+                            courseIndex = -1; // for isRealGrade logic
+                        }
+                    }
+                }
+
+                if (grade != null) {
+                    boolean isRealGrade = gradeIndex > courseIndex;
+                    if (!isRealGrade) {
+                        System.out.println("⚠️ Skipped false match: " + currentCourseCode + " (grade guess: " + grade + ")");
+                        continue;
+                    }
+
+                    if (grade.equals("S")) {
+                        if (nonCreditCourses.contains(currentCourseCode)) {
+                            System.out.println("✅ Passed kredisiz course: " + currentCourseCode + " (grade: S)");
+                            passedCourses.add(currentCourseCode);
+                        } else {
+                            System.out.println("⚠️ Ignored suspicious S grade for: " + currentCourseCode);
+                        }
+                    } else if (grade.equals("FF") || grade.equals("FD") || grade.equals("NA") || grade.equals("DZ") || grade.equals("FG")) {
+                        System.out.println("⚠️ Skipped failed course: " + currentCourseCode + " (grade: " + grade + ")");
+                    } else {
+                        System.out.println("✅ Passed course: " + currentCourseCode + " (grade: " + grade + ")");
+                        passedCourses.add(currentCourseCode);
+                    }
+                }
+            }
         }
-        return new ArrayList<>(codes);
+
+        return new ArrayList<>(passedCourses);
     }
 
     private static int extractTotalCredits(String text) {
