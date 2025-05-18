@@ -4,8 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -155,7 +157,24 @@ public class AuthService {
         return userInfo.updateGraduationStatusPairs(staffId, updates);
     }
 
+    public boolean findCompletedCurriculumCourses(Long studentId) {
+    String department = userInfo.findDepartmentByStudentId(studentId);
+    System.out.println("Department: " + department);
 
+    Integer curriculumId = userInfo.takeCurriculumid(department);
+    System.out.println("Curriculum ID: " + curriculumId);
+
+    List<String> curriculumCourses = userInfo.viewCurriculum(curriculumId);
+    System.out.println("Curriculum Courses: " + curriculumCourses);
+
+    List<String> studentCourses = userInfo.findCourseCodesByStudentId(studentId);
+    System.out.println("Student Courses: " + studentCourses);
+
+    boolean completed = curriculumCourses.containsAll(studentCourses);
+    System.out.println("Curriculum Completed: " + completed);
+
+    return completed;
+}
 
 
 }

@@ -130,6 +130,23 @@ public ResponseEntity<?> updateApprovalsBulk(
         ));
     }
 }
+
+    @GetMapping("/check-transcript/{studentId}")
+    public ResponseEntity<Map<String, Object>> checkTransciptCurriculumMatches(@PathVariable Long studentId) {
+        try {
+            boolean completed = authService.findCompletedCurriculumCourses(studentId);
+
+            return ResponseEntity.ok(Map.of(
+                "studentId", studentId,
+                "curriculumCompleted", completed
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                "error", "Something went wrong",
+                "details", e.getMessage()
+            ));
+        }
+    }
  
     
 

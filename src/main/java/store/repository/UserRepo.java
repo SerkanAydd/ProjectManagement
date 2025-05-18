@@ -206,5 +206,14 @@ public class UserRepo {
         return totalUpdated;
     }   
 
+    public List<String> findCourseCodesByStudentId(Long studentId) {
+        String sql = "SELECT coursecode FROM course_transcript WHERE studentid = ?";
+        return jdbcTemplate.queryForList(sql, String.class, studentId);
+    }
+
+    public String findDepartmentByStudentId(Long studentId) {
+        String sql = "SELECT department FROM student WHERE studentid = ?";
+        return jdbcTemplate.queryForObject(sql, String.class, studentId);
+    }
 
 }
