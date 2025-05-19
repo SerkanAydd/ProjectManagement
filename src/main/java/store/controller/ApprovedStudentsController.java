@@ -22,12 +22,29 @@ public class ApprovedStudentsController
     @Autowired
     private AdvisorService advServ;
 
+    @Autowired
+    private StudentService studentService;
+
     @PostMapping("/viewApprovedStudentList")
     public ResponseEntity<?> AdvisorViewApprStdList(@RequestParam int aid)
     {
         try
         {
             List<Student> stds = advServ.getApprovedStudents(aid);
+            return ResponseEntity.ok(stds);
+        }
+        catch (Exception e)
+        {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Unexpected server error", "details", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/viewEligibleStudents")
+    public ResponseEntity<?> ViewAllStudentsEligibleforGraduation()
+    {
+        try
+        {
+            List<Student> stds = studentService.StudentsEligibleforGraduation();
             return ResponseEntity.ok(stds);
         }
         catch (Exception e)

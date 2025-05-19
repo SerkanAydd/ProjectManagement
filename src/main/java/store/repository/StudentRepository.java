@@ -220,4 +220,17 @@ public class StudentRepository
         }
         return (students);
     }
+
+    public List<Student> getStudentListEligable()
+    {
+        String sql = "SELECT * FROM student WHERE approval = 'Approved' ORDER BY studentid";
+        List<Student> students = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Student.class));
+        students = getGPAandAdvNameforEach(students);
+        if (students.isEmpty())
+        {
+            System.out.println("No approved Student Found.");
+            return null;
+        }
+        return (students);
+    }
 }

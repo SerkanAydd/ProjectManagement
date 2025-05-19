@@ -67,4 +67,15 @@ public class StudentService
         }
         return (students);
     }
+
+    public List<Student> StudentsEligibleforGraduation()
+    {
+        List<Student> students = stdRepo.getStudentListEligable();
+    
+        if (students == null || students.isEmpty()) 
+        {
+            throw new RuntimeException("No students found for Eligible to graduate");
+        }
+        return (students);
+    }
 }

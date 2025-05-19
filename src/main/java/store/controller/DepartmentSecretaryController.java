@@ -35,8 +35,8 @@ public class DepartmentSecretaryController
         }
     }
 
-    @PostMapping("/viewRankedList")
-    public ResponseEntity<?> viewDepartmentRankedList(@RequestParam String departmentName)
+    @PostMapping("/viewDepartmentRankedList")
+    public ResponseEntity<?> viewDepartmentSecretaryRankedStudentsList(String departmentName)
     {
         try
         {
@@ -48,4 +48,5 @@ public class DepartmentSecretaryController
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Unexpected server error", "details", e.getMessage()));
         }
     }
+    
 }
