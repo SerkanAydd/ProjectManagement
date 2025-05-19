@@ -15,8 +15,6 @@ import java.util.List;
 import java.io.*;
 import java.util.zip.*;
 
-
-
 public class PdfGenerator {
 
     public static boolean createStudentPdf(List<Studentt> students) {
@@ -138,8 +136,6 @@ public class PdfGenerator {
         }
         folder.delete();
     }
-
-
 
     public static boolean zipDiplomasFolder() {
         String sourceFolder = "diplomas";
