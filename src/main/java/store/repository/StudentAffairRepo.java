@@ -40,6 +40,16 @@ public class StudentAffairRepo {
             rs.getString("faculty"),
             rs.getString("department")
     ));
-}
+    }
+
+    public int getStudentIdByGpa(double gpa) {
+        String sql = "SELECT studentid FROM transcript WHERE gpa = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{gpa}, Integer.class);
+    }
+
+    public List<String> getDistinctFaculties() {
+        String sql = "SELECT DISTINCT faculty FROM student";
+        return jdbcTemplate.queryForList(sql, String.class);
+    }
 
 }

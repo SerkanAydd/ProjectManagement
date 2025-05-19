@@ -108,5 +108,11 @@ public class StudentAffairController {
                         .body("High honor certificates generation failed. Please check the logs or try again.");
         }
     }
+
+    @PostMapping("/download_all_berat_certificate")
+    public ResponseEntity<?> download_all_berat_certificates() {
+        boolean success = studentAffairService.downloadAllBeratCertificates();
+        return null;
+    }
 }
 
