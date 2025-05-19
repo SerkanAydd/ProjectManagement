@@ -52,11 +52,15 @@ public class AuthService {
         String id = userInfo.getId(mail);
         String name = userInfo.getName(mail);
         String token = jwtUtil.generateToken(mail, role);
+        String faculty = userInfo.getFaculty(mail);
+        String department = userInfo.getDepartment(mail);
 
         Map<String, String> userMap = new HashMap<>();
         userMap.put("role", role);
         userMap.put("mail", mail);
         userMap.put("id", id);
+        userMap.put("faculty", faculty);
+        userMap.put("department", department);
         userMap.put("token", token);
         userMap.put("name", name);
 
