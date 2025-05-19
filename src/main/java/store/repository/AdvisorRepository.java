@@ -11,6 +11,9 @@ import store.entity.Staff;
 import store.entity.Student;
 import store.repository.StudentRepository;
 
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
+
 import java.math.BigDecimal;
 
 @Repository
@@ -48,6 +51,30 @@ public class AdvisorRepository
         }
         Staff advisor = new Staff(aid, password, name, faculty, department, "Advisor", mail);
         return advisor;
+    }
+
+    public int getAdvisorId(String mail) 
+    {
+        String sql = "SELECT id FROM staff WHERE mail = ?";
+        try
+        {
+            return jdbcTemplate.queryForObject(sql, Integer.class, mail);
+        } 
+        catch (EmptyResultDataAccessException e) 
+        {
+            System.out.println("No advisor found with mail: " + mail);
+            return -1;
+        }
+        catch (IncorrectResultSizeDataAccessException e) 
+        {
+            System.out.println("Multiple advisors found with same mail: " + mail);
+            return -1;
+        }
+        catch (Exception e) 
+        {
+            System.out.println("Unexpected error: " + e.getMessage());
+            return -1;
+        }
     }
 
     public List<Student> findStudentsByAdvisor(int aid)

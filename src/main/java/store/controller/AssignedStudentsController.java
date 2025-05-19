@@ -23,11 +23,11 @@ public class AssignedStudentsController
     private AdvisorService advServ;
     
     @PostMapping("/viewAssignedStudentList")
-    public ResponseEntity<?> AdvisorViewAssigStdList(@RequestParam int aid)
+    public ResponseEntity<?> AdvisorViewAssigStdList(@RequestParam String mail)
     {
         try
         {
-            List<Student> stds = advServ.getAssignedStudents(aid);
+            List<Student> stds = advServ.getAssignedStudents(mail);
             return ResponseEntity.ok(stds);
         }
         catch (Exception e)
