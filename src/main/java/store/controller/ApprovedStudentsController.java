@@ -26,11 +26,11 @@ public class ApprovedStudentsController
     private StudentService studentService;
 
     @PostMapping("/viewApprovedStudentList")
-    public ResponseEntity<?> AdvisorViewApprStdList(@RequestParam int aid)
+    public ResponseEntity<?> AdvisorViewApprStdList(@RequestParam String mail)
     {
         try
         {
-            List<Student> stds = advServ.getApprovedStudents(aid);
+            List<Student> stds = advServ.getApprovedStudents(mail);
             return ResponseEntity.ok(stds);
         }
         catch (Exception e)

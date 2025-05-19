@@ -28,8 +28,9 @@ public class AdvisorService
     @Autowired
     private AdvisorRepository advInf;
 
-    public List<Student> getAssignedStudents(int advId)
+    public List<Student> getAssignedStudents(String advMail)
     {
+        int advId = advInf.getAdvisorId(advMail);
         List<Student> students = advInf.findStudentsByAdvisor(advId);
         if (students == null || students.isEmpty()) 
         {
@@ -38,8 +39,9 @@ public class AdvisorService
         return students;
     }
 
-    public List<Student> getApprovedStudents(int advId)
+    public List<Student> getApprovedStudents(String advMail)
     {
+        int advId = advInf.getAdvisorId(advMail);
         List<Student> students = advInf.findApprovedStudentsByAdvisor(advId);
         if (students == null || students.isEmpty()) 
         {
