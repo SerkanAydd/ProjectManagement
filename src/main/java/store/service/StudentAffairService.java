@@ -103,22 +103,25 @@ public class StudentAffairService {
 
         boolean success1 = InstitutionBeratGenerator.createBeratCertificates(institution_berat);
         bool_array.add(success1);
-        
         List<String> distinctFaculties = studentAffairRepo.getDistinctFaculties();
         
         for (String distinctFaculty : distinctFaculties) {
+
             List<Studentt> studentList_from_same_faculty = studentAffairRepo.getAllStudentsByFaculty(distinctFaculty);
             List<Double> new_gpas = new ArrayList<>();
 
             for (Studentt student : studentList_from_same_faculty) {
                 int studentid = student.getStudentid();
-                new_gpas.add(studentAffairRepo.getGpaById(studentid));
+                double gpa__ = studentAffairRepo.getGpaById(studentid);
+                if (gpa__ >= 0.0) {
+                    new_gpas.add(gpa__);
+                }
             }
             
             Collections.sort(new_gpas, Collections.reverseOrder());
 
             List<Studentt> top_three_faculty = new ArrayList<>();
-                        
+            
             for (int i = 0; i < 3; i++) {
                 double a_gpa = new_gpas.get(i);
                 int student_id = studentAffairRepo.getStudentIdByGpa(a_gpa);
@@ -138,7 +141,10 @@ public class StudentAffairService {
 
             for (Studentt student : studentList_from_same_department) {
                 int studentid2 = student.getStudentid();
-                new_gpas2.add(studentAffairRepo.getGpaById(studentid2));
+                double gpa2__ = studentAffairRepo.getGpaById(studentid2);
+                if (gpa2__ >= 0) {
+                    new_gpas2.add(gpa2__);
+                }
             }
             
             Collections.sort(new_gpas2, Collections.reverseOrder());
@@ -172,7 +178,10 @@ public class StudentAffairService {
         }
 
         createFolder("Berat_Certificates");
-
+        for (String fileName : final_zip) {
+            System.out.println(fileName);
+        }
+        
         Path targetPath = Paths.get("Berat_Certificates");
         
         try {
@@ -190,8 +199,8 @@ public class StudentAffairService {
         }
 
         boolean successful = zipFolder("Berat_Certificates");
-        
         return successful;
+        
     }
     
     private boolean createFolder(String fileName) {
