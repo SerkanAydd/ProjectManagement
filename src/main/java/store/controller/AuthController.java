@@ -82,71 +82,7 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/viewCurriculum")
-    public ResponseEntity<?> vievCurriculum(@RequestParam String department) {
-        try {
-            List<String> userMap = authService.vievCurriculum(department);
-            return ResponseEntity.ok(userMap);
-
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
-                    "error", e.getMessage()
-            ));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
-                    "error", "Unable to load \r\n" + //
-                                                "curriculum. \r\n" + //
-                                                "Please try again \r\n" + //
-                                                "later.",
-                    "details", e.getMessage()
-            ));
-        }
-    }
-        @GetMapping("/students/by-advisor/{advisorId}")
-        public ResponseEntity<List<Map<String, String>>> getStudentsByAdvisor(@PathVariable Long advisorId) {
-            List<Map<String, String>> students = authService.getStudentsByAdvisor(advisorId);
-            return ResponseEntity.ok(students);
-        }
-
-   @PostMapping("/update-approvals")
-public ResponseEntity<?> updateApprovalsBulk(
-        @RequestParam Long staffId,
-        @RequestBody List<Map<String, String>> updates) {
-
-    try {
-        int updatedCount = authService.updateMultipleStudentStatuses(staffId, updates);
-
-        return ResponseEntity.ok(Map.of(
-            "updated", updatedCount,
-            "message", "Approval statuses updated successfully"
-        ));
-
-    } catch (IllegalArgumentException e) {
-        return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-    } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
-            "error", "Unexpected error",
-            "details", e.getMessage()
-        ));
-    }
-}
-
-    @GetMapping("/check-transcript/{studentId}")
-    public ResponseEntity<Map<String, Object>> checkTransciptCurriculumMatches(@PathVariable Long studentId) {
-        try {
-            boolean completed = authService.findCompletedCurriculumCourses(studentId);
-
-            return ResponseEntity.ok(Map.of(
-                "studentId", studentId,
-                "curriculumCompleted", completed
-            ));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
-                "error", "Something went wrong",
-                "details", e.getMessage()
-            ));
-        }
-    }
+   
  
     
 

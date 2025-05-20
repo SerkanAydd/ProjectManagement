@@ -134,47 +134,7 @@ public class AuthService {
         return registerMessage;
     }
 
-    public List<String> vievCurriculum(String department) {
-        Integer curriculumId = userInfo.takeCurriculumid(department);
-        if (curriculumId == null) {
-            return Collections.singletonList("Curriculum does not exist");
-        }
-        List<String> curriculum =userInfo.viewCurriculum(curriculumId);
-        return curriculum;
-        }
 
-    public List<Map<String, String>> getStudentsByAdvisor(Long advisorUserId) {
-        return userInfo.findStudentNamesAndApprovalsByAdvisorId(advisorUserId);
-    }
-    public int updateMultipleStudentStatuses(Long staffId, List<Map<String, String>> updates) {
-        for (Map<String, String> update : updates) {
-            String status = update.get("status");
-            if (!status.equals("Approved") && !status.equals("Rejected")) {
-                throw new IllegalArgumentException("Invalid status: " + status);
-            }
-        }
-
-        return userInfo.updateGraduationStatusPairs(staffId, updates);
-    }
-
-    public boolean findCompletedCurriculumCourses(Long studentId) {
-    String department = userInfo.findDepartmentByStudentId(studentId);
-    System.out.println("Department: " + department);
-
-    Integer curriculumId = userInfo.takeCurriculumid(department);
-    System.out.println("Curriculum ID: " + curriculumId);
-
-    List<String> curriculumCourses = userInfo.viewCurriculum(curriculumId);
-    System.out.println("Curriculum Courses: " + curriculumCourses);
-
-    List<String> studentCourses = userInfo.findCourseCodesByStudentId(studentId);
-    System.out.println("Student Courses: " + studentCourses);
-
-    boolean completed = curriculumCourses.containsAll(studentCourses);
-    System.out.println("Curriculum Completed: " + completed);
-
-    return completed;
-}
 
 
 }

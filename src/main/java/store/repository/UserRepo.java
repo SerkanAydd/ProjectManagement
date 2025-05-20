@@ -173,47 +173,5 @@ public class UserRepo {
         String sql = "SELECT COALESCE(MAX(studentid), 0) FROM student";
         return jdbcTemplate.queryForObject(sql, Integer.class);
     }
-    public Integer takeCurriculumid(String department){
-        String sql = "SELECT curriculumid FROM curriculum WHERE department = ?";
-        return jdbcTemplate.queryForObject(sql, Integer.class, department);        
-    }
-    public List<String> viewCurriculum(int curriculumId){
-        String sql = "SELECT coursecode FROM course_curriculum WHERE curriculumid = ?";
-        return jdbcTemplate.queryForList(sql, String.class, curriculumId);        
-    }
-
-    public List<Map<String, String>> findStudentNamesAndApprovalsByAdvisorId(Long advisorUserId) {
-    String sql = "SELECT name, approval FROM student WHERE staff_id = ?";
-    return jdbcTemplate.query(sql, (rs, rowNum) -> {
-        Map<String, String> row = new HashMap<>();
-        row.put("name", rs.getString("name"));
-        row.put("approval", rs.getString("approval"));
-        return row;
-    }, advisorUserId);
-    }
-
-    public int updateGraduationStatusPairs(Long staffId, List<Map<String, String>> updates) {
-        String sql = "UPDATE student SET approval = ? WHERE staff_id = ? AND name = ?";
-        int totalUpdated = 0;
-
-        for (Map<String, String> update : updates) {
-            String name = update.get("name");
-            String status = update.get("status");
-            int updated = jdbcTemplate.update(sql, status, staffId, name);
-            totalUpdated += updated;
-        }
-
-        return totalUpdated;
-    }   
-
-    public List<String> findCourseCodesByStudentId(Long studentId) {
-        String sql = "SELECT coursecode FROM course_transcript WHERE studentid = ?";
-        return jdbcTemplate.queryForList(sql, String.class, studentId);
-    }
-
-    public String findDepartmentByStudentId(Long studentId) {
-        String sql = "SELECT department FROM student WHERE studentid = ?";
-        return jdbcTemplate.queryForObject(sql, String.class, studentId);
-    }
-
+   
 }
