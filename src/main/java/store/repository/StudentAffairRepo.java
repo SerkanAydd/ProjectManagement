@@ -33,6 +33,7 @@ public class StudentAffairRepo {
         ));
     }
 
+
     public Studentt getStudentById(int studentid) {
     String sql = "SELECT * FROM student WHERE studentid = ?";
     return jdbcTemplate.queryForObject(sql, new Object[]{studentid}, (rs, rowNum) -> new Studentt(
@@ -41,6 +42,15 @@ public class StudentAffairRepo {
             rs.getString("faculty"),
             rs.getString("department")
     ));
+    }
+    public List<Studentt> getApprovedStudents() {
+        String sql = "SELECT * FROM student WHERE approval = 'Approved'";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new Studentt(
+                rs.getInt("studentid"),
+                rs.getString("name"),
+                rs.getString("faculty"),
+                rs.getString("department")
+        ));
     }
 
     public int getStudentIdByGpa(double gpa) {
@@ -68,6 +78,7 @@ public class StudentAffairRepo {
         rs.getString("department")
     ));
     }
+
 
     public List<Studentt> getAllStudentsByDepartment(String department) {
     String sql = "SELECT * FROM student WHERE department = ?";

@@ -1,6 +1,9 @@
 package store.controller;
+import store.entity.Studentt;
 
 import java.io.File;
+import org.springframework.http.ResponseEntity;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
@@ -134,6 +137,22 @@ public class StudentAffairController {
             return ResponseEntity
                         .status(HttpStatus.INTERNAL_SERVER_ERROR)
                         .body("High honor certificates generation failed. Please check the logs or try again.");
+        }
+    }
+
+    @PostMapping("/approved-students")
+    public ResponseEntity<List<Studentt>> getApprovedStudents() {
+        try {
+            List<Studentt> approvedStudents = studentAffairService.getApprovedStudents();
+
+            if (approvedStudents.isEmpty()) {
+                return ResponseEntity.noContent().build(); // 204 No Content
+            }
+
+            return ResponseEntity.ok(approvedStudents); // 200 OK + data
+        } catch (Exception e) {
+            System.err.println("Controller error: " + e.getMessage());
+            return ResponseEntity.internalServerError().build(); // 500 Internal Server Error
         }
     }
 }
