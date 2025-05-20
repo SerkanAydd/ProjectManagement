@@ -1,6 +1,7 @@
 package store.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import store.entity.Studentt;
@@ -44,6 +45,7 @@ public class StudentAffairRepo {
 
     public int getStudentIdByGpa(double gpa) {
         String sql = "SELECT studentid FROM transcript WHERE gpa = ?";
+        System.out.println(gpa);
         return jdbcTemplate.queryForObject(sql, new Object[]{gpa}, Integer.class);
     }
 
@@ -79,7 +81,12 @@ public class StudentAffairRepo {
 
     public double getGpaById(int studentid) {
         String sql = "SELECT gpa FROM transcript WHERE studentid = ?";
-        return jdbcTemplate.queryForObject(sql, new Object[]{studentid}, Double.class);
+        try {
+            return jdbcTemplate.queryForObject(sql, new Object[]{studentid}, Double.class);
+        } catch (EmptyResultDataAccessException e) {
+            System.out.println("No GPA found for student ID: " + studentid);
+            return -1.00; // or return a default value like 0.0
+        }
     }
 
 
