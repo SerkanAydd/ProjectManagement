@@ -115,7 +115,7 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
-/*
+
     @PostMapping("/register_student")
     public ResponseEntity<?> registerStudent(
             @RequestParam String mail,
@@ -150,4 +150,5 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
+}
 }

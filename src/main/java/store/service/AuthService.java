@@ -240,7 +240,7 @@ public class AuthService {
         String extractedMail = jwtUtil.extractMail(token);
         return jwtUtil.isTokenValid(token, extractedMail);
     }
-/*
+
     public Map<String, String> register_student(String mail, String name, String faculty, String department, String password) {
         Resource resource = new ClassPathResource("student_emails.txt");
         Map<String, String> registerMessage = new HashMap<>();
@@ -270,7 +270,7 @@ public class AuthService {
         registerMessage.put("Successful", "False");
         registerMessage.put("Message", "User mail is not in database");
         return registerMessage;
-    }*/
+    }
     private boolean isMailInStudentList(String mail) {
         Resource resource = new ClassPathResource("student_emails.txt");
         try (BufferedReader br = new BufferedReader(new InputStreamReader(resource.getInputStream()))) {
@@ -312,7 +312,7 @@ public class AuthService {
         }
         return result;
     }
-/*
+
     public Map<String, String> register_staff(String mail, String name, String title, String faculty, String department, String password) {
         Resource resource = new ClassPathResource("StaffMails.txt");
         Map<String, String> registerMessage = new HashMap<>();
@@ -344,4 +344,4 @@ public class AuthService {
         return registerMessage;
 
 
-}
+}}

@@ -41,14 +41,14 @@ public class OzturkRepo {
     }, staff_id);
     }
 
-    public int updateGraduationStatusPairs(Long staffId, List<Map<String, String>> updates) {
-        String sql = "UPDATE student SET approval = ? WHERE staff_id = ? AND name = ?";
+    public int updateGraduationStatusPairs(String staffMail, List<Map<String, String>> updates) {
+        String sql = "UPDATE student SET approval = ? WHERE mail = ? AND name = ?";
         int totalUpdated = 0;
 
         for (Map<String, String> update : updates) {
             String name = update.get("name");
             String status = update.get("status");
-            int updated = jdbcTemplate.update(sql, status, staffId, name);
+            int updated = jdbcTemplate.update(sql, status, staffMail, name);
             totalUpdated += updated;
         }
 
