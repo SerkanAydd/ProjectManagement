@@ -67,4 +67,14 @@ public class OzturkRepo {
         return jdbcTemplate.queryForObject(sql, String.class, studentId);
     }
 
+    public Long findStudentIdByName(String studentName, String mail) {
+    long staffid =  findStaffIdByEmail(mail);
+    System.out.println("Staffid" +staffid);
+    String sql = "SELECT studentid FROM student WHERE name = ? AND staff_id = ?";
+    return jdbcTemplate.queryForObject(sql, Long.class, studentName, staffid);
+    }
+
+
+
+
 }

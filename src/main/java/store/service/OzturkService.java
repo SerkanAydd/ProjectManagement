@@ -54,19 +54,31 @@ public class OzturkService {
         return ozturkRepo.updateGraduationStatusPairs(staffMail, updates);
     }
 
-    public boolean findCompletedCurriculumCourses(Long studentId) {
+public boolean findCompletedCurriculumCourses(String studentName, String mail) {
+    System.out.println(">> Başlatıldı: " + studentName + " / " + mail);
+
+    Long studentId = ozturkRepo.findStudentIdByName(studentName, mail);
+    System.out.println("Student ID: " + studentId);
+
     String department = ozturkRepo.findDepartmentByStudentId(studentId);
+    System.out.println("Department: " + department);
 
     Integer curriculumId = ozturkRepo.takeCurriculumid(department);
+    System.out.println("Curriculum ID: " + curriculumId);
 
     List<String> curriculumCourses = ozturkRepo.viewCurriculum(curriculumId);
+    System.out.println("Curriculum Courses: " + curriculumCourses);
 
     List<String> studentCourses = ozturkRepo.findCourseCodesByStudentId(studentId);
+    System.out.println("Student Courses: " + studentCourses);
 
-    boolean completed =  studentCourses.containsAll(curriculumCourses);
+    boolean completed = studentCourses.containsAll(curriculumCourses);
+    System.out.println("Curriculum Completed: " + completed);
 
     return completed;
 }
+
+
 
 
 }

@@ -72,13 +72,13 @@ public ResponseEntity<?> updateApprovalsBulk(
     }
 }
 
-    @GetMapping("/check-transcript/{studentId}")
-    public ResponseEntity<Map<String, Object>> checkTransciptCurriculumMatches(@PathVariable Long studentId) {
+    @GetMapping("/check-transcript/{studentName}/{advisorMail}")
+    public ResponseEntity<Map<String, Object>> checkTransciptCurriculumMatches(@PathVariable String studentName, @PathVariable String advisorMail) {
         try {
-            boolean completed = ozturkService.findCompletedCurriculumCourses(studentId);
+            boolean completed = ozturkService.findCompletedCurriculumCourses(studentName,advisorMail);
 
             return ResponseEntity.ok(Map.of(
-                "studentId", studentId,
+                "studentId", studentName,
                 "curriculumCompleted", completed
             ));
         } catch (Exception e) {
