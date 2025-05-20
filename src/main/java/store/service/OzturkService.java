@@ -43,7 +43,7 @@ public class OzturkService {
     public List<Map<String, String>> getStudentsByAdvisor(String advisorMail) {
         return ozturkRepo.findStudentNamesAndApprovalsByAdvisorMail(advisorMail);
     }
-    public int updateMultipleStudentStatuses(Long staffId, List<Map<String, String>> updates) {
+    public int updateMultipleStudentStatuses(String staffMail, List<Map<String, String>> updates) {
         for (Map<String, String> update : updates) {
             String status = update.get("status");
             if (!status.equals("Approved") && !status.equals("Rejected")) {
@@ -51,7 +51,7 @@ public class OzturkService {
             }
         }
 
-        return ozturkRepo.updateGraduationStatusPairs(staffId, updates);
+        return ozturkRepo.updateGraduationStatusPairs(staffMail, updates);
     }
 
     public boolean findCompletedCurriculumCourses(Long studentId) {

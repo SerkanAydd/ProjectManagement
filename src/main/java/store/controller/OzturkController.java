@@ -51,11 +51,11 @@ public class OzturkController {
 
    @PostMapping("/update-approvals")
 public ResponseEntity<?> updateApprovalsBulk(
-        @RequestParam Long staffId,
+        @RequestParam String staffMail,
         @RequestBody List<Map<String, String>> updates) {
 
     try {
-        int updatedCount = ozturkService.updateMultipleStudentStatuses(staffId, updates);
+        int updatedCount = ozturkService.updateMultipleStudentStatuses(staffMail, updates);
 
         return ResponseEntity.ok(Map.of(
             "updated", updatedCount,
