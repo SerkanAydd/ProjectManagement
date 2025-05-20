@@ -40,6 +40,48 @@ public class StudentAffairRepo {
             rs.getString("faculty"),
             rs.getString("department")
     ));
-}
+    }
+
+    public int getStudentIdByGpa(double gpa) {
+        String sql = "SELECT studentid FROM transcript WHERE gpa = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{gpa}, Integer.class);
+    }
+
+    public List<String> getDistinctFaculties() {
+        String sql = "SELECT DISTINCT faculty FROM student";
+        return jdbcTemplate.queryForList(sql, String.class);
+    }
+
+    public List<String> getDistinctDepartments() {
+        String sql = "SELECT DISTINCT department FROM student";
+        return jdbcTemplate.queryForList(sql, String.class);
+    }
+
+    public List<Studentt> getAllStudentsByFaculty(String faculty) {
+    String sql = "SELECT * FROM student WHERE faculty = ?";
+    return jdbcTemplate.query(sql, new Object[]{faculty}, (rs, rowNum) -> new Studentt(
+        rs.getInt("studentid"),
+        rs.getString("name"),
+        rs.getString("faculty"),
+        rs.getString("department")
+    ));
+    }
+
+    public List<Studentt> getAllStudentsByDepartment(String department) {
+    String sql = "SELECT * FROM student WHERE department = ?";
+    return jdbcTemplate.query(sql, new Object[]{department}, (rs, rowNum) -> new Studentt(
+        rs.getInt("studentid"),
+        rs.getString("name"),
+        rs.getString("faculty"),
+        rs.getString("department")
+    ));
+    }
+
+    public double getGpaById(int studentid) {
+        String sql = "SELECT gpa FROM transcript WHERE studentid = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{studentid}, Double.class);
+    }
+
 
 }
+
