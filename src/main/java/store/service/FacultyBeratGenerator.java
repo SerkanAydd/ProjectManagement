@@ -13,13 +13,14 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
+
 import java.io.*;
 
-public class InstitutionBeratGenerator {
-    public static boolean createBeratCertificates(List<Studentt> studentList) {
-        String folderName = "instutition_berat_certificates";
+public class FacultyBeratGenerator {
+    public static boolean createBeratCertificates(String facultyName, List<Studentt> studentList) {
+        String folderName = facultyName +  "_berat_certificates";
         File folder = new File(folderName);
-        
+
         if (folder.exists() && folder.isDirectory()) {
             deleteFolderRecursively(folder);
             System.out.println("Existing folder deleted.");
@@ -27,7 +28,7 @@ public class InstitutionBeratGenerator {
             System.out.println("No existing folder found.");
         }
 
-        String folderNameWithZip = "instutition_berat_certificates.zip";
+        String folderNameWithZip = folderName + ".zip";
         File folderWithZip = new File(folderNameWithZip);
 
         if (folderWithZip.exists()) {
@@ -44,7 +45,8 @@ public class InstitutionBeratGenerator {
         int count = 0;
 
         for (Studentt student : studentList) {
-            String outputPath_ =  "instutition_berat_certificates/" + student.getStudentid() + ".pdf";
+
+            String outputPath_ =  folderName + "/" + student.getStudentid() + ".pdf";
             count = count + 1;
 
             try {
@@ -54,29 +56,29 @@ public class InstitutionBeratGenerator {
                 pdfDoc.setDefaultPageSize(customSize);
                 Document document = new Document(pdfDoc);
 
-                InputStream imageStream = InstitutionBeratGenerator.class.getClassLoader().getResourceAsStream("institution_berat_certificate.png");
+                InputStream imageStream = FacultyBeratGenerator.class.getClassLoader().getResourceAsStream("faculty_berat_certificate.png");
                 ImageData imageData = ImageDataFactory.create(imageStream.readAllBytes());
                 Image background = new Image(imageData);
                 background.scaleToFit(PageSize.A4.getWidth(), PageSize.A4.getHeight());
                 background.setFixedPosition(0, 0);
                 document.add(background);
 
-                String text = "Sayın " + student.getName() + ", İzmir Yüksek Teknoloji Enstitüsü'nü " + count + ". tamamladığı için bu Berat Sertifikası'nı almaya hak kazanmıştır.";
+                String text = "Sayın " + student.getName() + ", İzmir Yüksek Teknoloji Enstitüsü " + student.getFaculty() + " Fakültesi'ni " + count + ". tamamladığı için bu Berat Sertifikası'nı almaya hak kazanmıştır.";
                 Paragraph faculty = new Paragraph(text).setFontSize(15);
                 faculty.setFixedPosition(100, 150, 400);
                 document.add(faculty);
                 
                 document.close();
-
             } catch (Exception e) {
                 e.printStackTrace();
                 return false;
             }
         }
 
-        boolean successful = zipDiplomasFolder();
+        boolean successful = zipDiplomasFolder(folderName);
         
         return successful;
+
     }
 
     public static void deleteFolderRecursively(File folder) {
@@ -93,15 +95,15 @@ public class InstitutionBeratGenerator {
         folder.delete();
     }
 
-    public static boolean zipDiplomasFolder() {
-        String sourceFolder = "instutition_berat_certificates";
-        String zipFilePath = "instutition_berat_certificates.zip";
+    public static boolean zipDiplomasFolder(String folderName) {
+        String sourceFolder = folderName;
+        String zipFilePath = sourceFolder +  ".zip";
 
         File folder = new File(sourceFolder);
         File[] files = folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".pdf"));
 
         if (files == null || files.length == 0) {
-            System.out.println("No PDF files found in the high_honor_certificates folder.");
+            System.out.println("No PDF files found in the faculty folder.");
             return false;
         }
 
@@ -133,4 +135,5 @@ public class InstitutionBeratGenerator {
             return false;
         }
     }
+
 }

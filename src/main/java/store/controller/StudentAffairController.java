@@ -112,6 +112,7 @@ public class StudentAffairController {
     @PostMapping("/download_all_berat_certificate")
     public ResponseEntity<?> download_all_berat_certificates() {
         boolean success = studentAffairService.downloadAllBeratCertificates();
+
         return null;
     }
 }
