@@ -1,9 +1,15 @@
 package store.service;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.io.*;
 
 import org.apache.tomcat.util.descriptor.tagplugin.TagPluginParser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,7 +103,7 @@ public class StudentAffairService {
 
         boolean success1 = InstitutionBeratGenerator.createBeratCertificates(institution_berat);
         bool_array.add(success1);
-         
+        
         List<String> distinctFaculties = studentAffairRepo.getDistinctFaculties();
         
         for (String distinctFaculty : distinctFaculties) {
@@ -166,10 +172,27 @@ public class StudentAffairService {
         }
 
         createFolder("Berat_Certificates");
-        
-        return true;
-    }
 
+        Path targetPath = Paths.get("Berat_Certificates");
+        
+        try {
+
+            for (String fileName : final_zip) {
+                Path sourcePath = Paths.get(fileName);
+                Path destinationPath = targetPath.resolve(fileName);
+
+                Files.move(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
+                System.out.println("Moved: " + fileName);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        boolean successful = zipFolder("Berat_Certificates");
+        
+        return successful;
+    }
     
     private boolean createFolder(String fileName) {
         String folderName = fileName;
@@ -212,7 +235,31 @@ public class StudentAffairService {
             }
         }
         folder.delete();
-    } 
+    }
+
+    private boolean zipFolder(String folderName) {
+        Path sourceDir = Paths.get(folderName);
+        String zipFileName = folderName + ".zip";
+
+        try (ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(zipFileName))) {
+            Files.walk(sourceDir)
+                .filter(path -> !Files.isDirectory(path))
+                .forEach(path -> {
+                    ZipEntry zipEntry = new ZipEntry(sourceDir.relativize(path).toString());
+                    try {
+                        zipOut.putNextEntry(zipEntry);
+                        Files.copy(path, zipOut);
+                        zipOut.closeEntry();
+                    } catch (IOException e) {
+                        System.err.println("Failed to zip file: " + path + " due to " + e);
+                    }
+                });
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
 }
 
