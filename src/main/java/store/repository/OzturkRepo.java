@@ -24,14 +24,21 @@ public class OzturkRepo {
         return jdbcTemplate.queryForList(sql, String.class, curriculumId);        
     }
 
-    public List<Map<String, String>> findStudentNamesAndApprovalsByAdvisorId(Long advisorUserId) {
-    String sql = "SELECT name, approval FROM student WHERE staff_id = ?";
+    public Integer findStaffIdByEmail(String email) {
+        String sql = "SELECT id FROM staff WHERE mail = ?";
+        return jdbcTemplate.queryForObject(sql, Integer.class, email);
+    }
+
+    public List<Map<String, String>> findStudentNamesAndApprovalsByAdvisorMail(String advisorMail) {
+    
+        int staff_id = findStaffIdByEmail(advisorMail);
+        String sql = "SELECT name, approval FROM student WHERE staff_id = ?";
     return jdbcTemplate.query(sql, (rs, rowNum) -> {
         Map<String, String> row = new HashMap<>();
         row.put("name", rs.getString("name"));
         row.put("approval", rs.getString("approval"));
         return row;
-    }, advisorUserId);
+    }, staff_id);
     }
 
     public int updateGraduationStatusPairs(Long staffId, List<Map<String, String>> updates) {

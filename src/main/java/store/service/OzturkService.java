@@ -40,8 +40,8 @@ public class OzturkService {
         return curriculum;
         }
 
-    public List<Map<String, String>> getStudentsByAdvisor(Long advisorUserId) {
-        return ozturkRepo.findStudentNamesAndApprovalsByAdvisorId(advisorUserId);
+    public List<Map<String, String>> getStudentsByAdvisor(String advisorMail) {
+        return ozturkRepo.findStudentNamesAndApprovalsByAdvisorMail(advisorMail);
     }
     public int updateMultipleStudentStatuses(Long staffId, List<Map<String, String>> updates) {
         for (Map<String, String> update : updates) {

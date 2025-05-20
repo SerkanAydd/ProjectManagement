@@ -43,9 +43,9 @@ public class OzturkController {
             ));
         }
     }
-        @GetMapping("/students/by-advisor/{advisorId}")
-        public ResponseEntity<List<Map<String, String>>> getStudentsByAdvisor(@PathVariable Long advisorId) {
-            List<Map<String, String>> students = ozturkService.getStudentsByAdvisor(advisorId);
+        @GetMapping("/students/by-advisor/{advisorMail}")
+        public ResponseEntity<List<Map<String, String>>> getStudentsByAdvisor(@PathVariable String advisorMail) {
+            List<Map<String, String>> students = ozturkService.getStudentsByAdvisor(advisorMail);
             return ResponseEntity.ok(students);
         }
 
