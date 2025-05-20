@@ -1,25 +1,33 @@
 package store.service;
 
+import java.util.List;
+
+import java.util.zip.*;
+
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
-import store.entity.Studentt;
-import java.io.File;
-import java.io.InputStream;
-import java.util.List;
+import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.io.font.PdfEncodings;
+
 import java.io.*;
-import java.util.zip.*;
 
-public class PdfGenerator {
+import store.entity.Studentt;
 
-    public static boolean createStudentPdf(List<Studentt> students) {
+public class HighHonorGenerator {
+    public static boolean createHighHonorCertificates(List<Studentt> studentList) {
 
-        String folderName = "diplomas";
+        String folderName = "high_honor_certificates";
         File folder = new File(folderName);
         
         if (folder.exists() && folder.isDirectory()) {
@@ -29,7 +37,7 @@ public class PdfGenerator {
             System.out.println("No existing folder found.");
         }
 
-        String folderNameWithZip = "diplomas.zip";
+        String folderNameWithZip = "high_honor_certificates.zip";
         File folderWithZip = new File(folderNameWithZip);
 
         if (folderWithZip.exists()) {
@@ -37,15 +45,14 @@ public class PdfGenerator {
             System.out.println("Existing ZIP file deleted.");
         }
 
-
         boolean success = folder.mkdir();   
         if (!success) {
             System.out.println("Does here return ?");
             return false;
         }
 
-        for (Studentt student : students) {
-            String outputPath_ =  "diplomas/" + student.getStudentid() + ".pdf";
+        for (Studentt student : studentList) {
+            String outputPath_ =  "high_honor_certificates/" + student.getStudentid() + ".pdf";
 
             try {
                 PdfWriter writer = new PdfWriter(outputPath_);
@@ -54,73 +61,31 @@ public class PdfGenerator {
                 pdfDoc.setDefaultPageSize(customSize);
                 Document document = new Document(pdfDoc);
 
-                InputStream imageStream = PdfGenerator.class.getClassLoader().getResourceAsStream("diploma.png");
+                InputStream imageStream = HighHonorGenerator.class.getClassLoader().getResourceAsStream("honor_certificate.png");
                 ImageData imageData = ImageDataFactory.create(imageStream.readAllBytes());
                 Image background = new Image(imageData);
                 background.scaleToFit(PageSize.A4.getWidth(), PageSize.A4.getHeight());
                 background.setFixedPosition(0, 0);
                 document.add(background);
 
-                String student_name = student.getName();
-                int name_length = student_name.length();
-                int name_halfLength = name_length / 2;
-                Paragraph name = new Paragraph(student_name).setFontSize(16);
-                name.setFixedPosition(260 - name_halfLength, 285, 400);  // adjust X, Y, Width
-                document.add(name);
-
-                String faculty_name_tr = student.getFaculty();
-                if (faculty_name_tr.equals("Engineering")) {
-                    faculty_name_tr = "Muhendislik";
-                } else if (faculty_name_tr.equals("Science")) {
-                    faculty_name_tr = "Bilim";
-                } else if (faculty_name_tr.equals("Architect")) {
-                    faculty_name_tr = "Mimarlik";
-                } else {
-                }
-
-                Paragraph faculty = new Paragraph(faculty_name_tr).setFontSize(9);
-                faculty.setFixedPosition(248, 242, 400);  // change coordinates accordingly
+                String text = "Sayın " + student.getName() + ", " + student.getFaculty() + " Fakültesi " + student.getDepartment() + " Bölümünde göstermiş olduğunuz akademik başarı nedeniyle, İzmir Yüksek Teknoloji Enstitüsü Rektörlüğü Yüksek Onur Listesi’ne alınmış bulunmaktasınız. Tebrik eder, başarılarınızın devamını dilerim.";
+                Paragraph faculty = new Paragraph(text).setFontSize(15);
+                faculty.setFixedPosition(100, 150, 400);
                 document.add(faculty);
-
-                Paragraph faculty_eng = new Paragraph(student.getFaculty()).setFontSize(9);
-                faculty_eng.setFixedPosition(267, 220, 400);  // change coordinates accordingly
-                document.add(faculty_eng);
-
-                Paragraph faculty_tr = new Paragraph(faculty_name_tr).setFontSize(15);
-                faculty_tr.setFixedPosition(248, 198, 400);  // change coordinates accordingly
-                document.add(faculty_tr);
-
-                Paragraph faculty_eng2 = new Paragraph(student.getFaculty()).setFontSize(7);
-                faculty_eng2.setFixedPosition(255, 178, 400);  // change coordinates accordingly
-                document.add(faculty_eng2);
-
-                String title_ = student.getFaculty();
-                if (title_.equals("Engineering")) {
-                    title_ = "Muhendis";
-                } else if (title_.equals("Science")) {
-                    title_ = "Bilim Insani";
-                } else if (title_.equals("Architect")) {
-                    title_ = "Mimar";
-                } else {
-
-                }
-
-                Paragraph title = new Paragraph(title_).setFontSize(15);
-                title.setFixedPosition(190, 150, 400);  // change coordinates accordingly
-                document.add(title);
-
+                
                 document.close();
+                
             } catch (Exception e) {
                 e.printStackTrace();
                 return false;
             }
+
         }
-        
+
         boolean successful = zipDiplomasFolder();
         
         return successful;
-        
-        
+
     }
 
     public static void deleteFolderRecursively(File folder) {
@@ -138,14 +103,14 @@ public class PdfGenerator {
     }
 
     public static boolean zipDiplomasFolder() {
-        String sourceFolder = "diplomas";
-        String zipFilePath = "diplomas.zip";
+        String sourceFolder = "high_honor_certificates";
+        String zipFilePath = "high_honor_certificates.zip";
 
         File folder = new File(sourceFolder);
         File[] files = folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".pdf"));
 
         if (files == null || files.length == 0) {
-            System.out.println("No PDF files found in the diplomas folder.");
+            System.out.println("No PDF files found in the high_honor_certificates folder.");
             return false;
         }
 
@@ -177,4 +142,5 @@ public class PdfGenerator {
             return false;
         }
     }
+
 }

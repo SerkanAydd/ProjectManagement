@@ -118,6 +118,68 @@ public class UserRepo {
         }
     }
 
+    private String getStudentFaculty(String mail)
+    {
+        String sql = "SELECT faculty FROM student WHERE mail = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, String.class, mail);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private String getStaffFaculty(String mail)
+    {
+        String sql = "SELECT faculty FROM staff WHERE mail = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, String.class, mail);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public String getFaculty(String mail)
+    {
+        String faculty = getStudentFaculty(mail);
+
+        if (faculty == null) {
+            faculty = getStaffFaculty(faculty);
+        }
+
+        return faculty;
+    }
+
+    private String getStudentDepartment(String mail)
+    {
+        String sql = "SELECT department FROM student WHERE mail = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, String.class, mail);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private String getStaffDepartment(String mail)
+    {
+        String sql = "SELECT department FROM staff WHERE mail = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, String.class, mail);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public String getDepartment(String mail)
+    {
+        String department = getStudentDepartment(mail);
+
+        if (department == null) {
+            department = getStaffDepartment(mail);
+        }
+
+        return department;
+    }
+
     public boolean register_student(int id, String mail, String name, String faculty, String department, String password) {
         String sql = "INSERT INTO student (studentid, password, faculty, department, startDate, mail, name, graduationstatus, staff_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         String sql_ = "SELECT id FROM staff WHERE title = ?";
