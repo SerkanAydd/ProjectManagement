@@ -42,13 +42,15 @@ public class OzturkRepo {
     }
 
     public int updateGraduationStatusPairs(String staffMail, List<Map<String, String>> updates) {
-        String sql = "UPDATE student SET approval = ? WHERE mail = ? AND name = ?";
+        
+        long staffId = findStaffIdByEmail(staffMail);
+        String sql = "UPDATE student SET approval = ? WHERE staff_id = ? AND name = ?";
         int totalUpdated = 0;
 
         for (Map<String, String> update : updates) {
             String name = update.get("name");
             String status = update.get("status");
-            int updated = jdbcTemplate.update(sql, status, staffMail, name);
+            int updated = jdbcTemplate.update(sql, status, staffId, name);
             totalUpdated += updated;
         }
 
