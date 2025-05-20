@@ -260,6 +260,15 @@ public class StudentAffairService {
             return false;
         }
     }
+    public List<Studentt> getApprovedStudents() {
+        try {
+            return studentAffairRepo.getApprovedStudents();
+        } catch (Exception e) {
+            System.err.println("Error while fetching approved students: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
 
 }
 
