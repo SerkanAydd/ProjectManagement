@@ -61,7 +61,7 @@ public class HonorGenerator {
                 background.setFixedPosition(0, 0);
                 document.add(background);
 
-                String text = "Sayın " + student.getName() + ", " + student.getFaculty() + " Fakültesi " + student.getDepartment() + " Bölümünde göstermiş olduğunuz akademik başarı nedeniyle, İzmir Yüksek Teknoloji Enstitüsü Rektörlüğü Onur Listesi’ne alınmış bulunmaktasınız. Tebrik eder, başarılarınızın devamını dilerim.";
+                String text = "Dear " + student.getName() + ", due to your academic success in the Department of " + student.getDepartment() + ", Faculty of " + student.getFaculty() + ", you have been placed on the Honor List by the Rectorate of Izmir Institute of Technology. Congratulations, and I wish you continued success.";
                 Paragraph faculty = new Paragraph(text).setFontSize(15);
                 faculty.setFixedPosition(100, 150, 400);
                 document.add(faculty);
@@ -101,11 +101,6 @@ public class HonorGenerator {
 
         File folder = new File(sourceFolder);
         File[] files = folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".pdf"));
-
-        if (files == null || files.length == 0) {
-            System.out.println("No PDF files found in the honor_certificates folder.");
-            return false;
-        }
 
         try (
             FileOutputStream fos = new FileOutputStream(zipFilePath);

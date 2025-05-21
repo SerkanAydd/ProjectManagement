@@ -66,7 +66,7 @@ public class StudentAffairService {
         List<String> distinctDepartments = studentAffairRepo.getDistinctDepartments();
 
         bool_array.add(createInstitutionBerat());
-        
+
         for (boolean bool_value : faculty_bool_array) {
             bool_array.add(bool_value);
         }
@@ -75,7 +75,6 @@ public class StudentAffairService {
             bool_array.add(bool_value);
         }
         
-
         List<String> final_zip = new ArrayList<>();
         final_zip.add("instutition_berat_certificates.zip");
 
@@ -190,7 +189,15 @@ public class StudentAffairService {
     private List<Studentt> get_first_three(List<Double> gpas) {
         List<Studentt> list_to_return = new ArrayList<>();
 
-        for (int i = 0; i < 3; i++) {
+        int gpas_size = gpas.size();
+        int threshold = 0;
+        if (gpas_size > 3) {
+            threshold = 3;
+        } else {
+            threshold = gpas_size;
+        }
+
+        for (int i = 0; i < threshold; i++) {
             List<Integer> studentids = studentAffairRepo.getStudentIdsByGpa(gpas.get(i));
             int size = studentids.size();
             if (size == 0) {
