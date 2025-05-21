@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import store.entity.Student;
 import store.service.AdvisorService;
-import store.service.StudentService;
 
 @RestController
 @RequestMapping("/api")
