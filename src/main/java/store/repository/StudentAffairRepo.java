@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import store.entity.Studentt;
 import store.entity.Transcript;
+import store.entity.Transcriptt;
 
 import java.util.ArrayList;
 import java.util.List;

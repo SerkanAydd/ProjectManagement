@@ -1,5 +1,5 @@
 package store.controller;
-
+import store.entity.Transcript;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
