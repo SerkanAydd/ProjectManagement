@@ -55,7 +55,10 @@ public Map<String, Object> findCompletedCurriculumCourses(String studentName, St
     List<String> curriculumCourses = ozturkRepo.viewCurriculumByCategory(curriculumId, "mandatory");
     List<String> studentCourses = ozturkRepo.findCourseCodesByStudentId(studentId);
 
-    boolean completed = studentCourses.containsAll(curriculumCourses)
+    boolean completed = false;
+    if (studentCourses != null && !studentCourses.isEmpty()) {
+        completed = studentCourses.containsAll(curriculumCourses);
+    }
     return Map.of(
         "studentId", studentId,
         "completed", completed
