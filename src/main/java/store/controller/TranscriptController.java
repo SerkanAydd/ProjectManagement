@@ -1,5 +1,7 @@
 package store.controller;
-
+import store.entity.Transcriptt;
+import java.util.List;
+import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +28,16 @@ public class TranscriptController {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Unexpected error: " + e.getMessage());
+        }
+    }
+    @PostMapping("/view_transcript")
+    public ResponseEntity<List<Transcriptt>> viewTranscripts() {
+        List<Transcriptt> transcripts = transcriptService.getAllTranscripts();
+
+        if (transcripts.isEmpty()) {
+            return ResponseEntity.noContent().build(); // 204 No Content
+        } else {
+            return ResponseEntity.ok(transcripts); // 200 OK + data
         }
     }
 }

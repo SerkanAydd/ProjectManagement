@@ -63,7 +63,7 @@ public class FacultyBeratGenerator {
                 background.setFixedPosition(0, 0);
                 document.add(background);
 
-                String text = "Sayın " + student.getName() + ", İzmir Yüksek Teknoloji Enstitüsü " + student.getFaculty() + " Fakültesi'ni " + count + ". tamamladığı için bu Berat Sertifikası'nı almaya hak kazanmıştır.";
+                String text = "Dear " + student.getName() + ", you have successfully completed the " + count + "th place in the Faculty of " + student.getFaculty() + " at Izmir Institute of Technology and have earned the right to receive this Certificate of Honor.";
                 Paragraph faculty = new Paragraph(text).setFontSize(15);
                 faculty.setFixedPosition(100, 150, 400);
                 document.add(faculty);
@@ -76,7 +76,6 @@ public class FacultyBeratGenerator {
         }
 
         boolean successful = zipDiplomasFolder(folderName);
-        
         return successful;
 
     }
@@ -101,11 +100,6 @@ public class FacultyBeratGenerator {
 
         File folder = new File(sourceFolder);
         File[] files = folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".pdf"));
-
-        if (files == null || files.length == 0) {
-            System.out.println("No PDF files found in the faculty folder.");
-            return false;
-        }
 
         try (
             FileOutputStream fos = new FileOutputStream(zipFilePath);

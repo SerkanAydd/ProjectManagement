@@ -5,16 +5,13 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 
-import java.sql.Date;
 import java.util.List;
 import store.entity.Staff;
 import store.entity.Student;
-import store.repository.StudentRepository;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
-import java.math.BigDecimal;
 
 @Repository
 public class AdvisorRepository 

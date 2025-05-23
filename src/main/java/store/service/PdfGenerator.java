@@ -144,11 +144,6 @@ public class PdfGenerator {
         File folder = new File(sourceFolder);
         File[] files = folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".pdf"));
 
-        if (files == null || files.length == 0) {
-            System.out.println("No PDF files found in the diplomas folder.");
-            return false;
-        }
-
         try (
             FileOutputStream fos = new FileOutputStream(zipFilePath);
             ZipOutputStream zos = new ZipOutputStream(fos)

@@ -11,7 +11,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.io.*;
 
-import org.apache.tomcat.util.descriptor.tagplugin.TagPluginParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,134 +27,54 @@ public class StudentAffairService {
     public boolean downloadAllDiplomas() {
         List<Studentt> studentList = studentAffairRepo.getAllStudents();
         boolean success = PdfGenerator.createStudentPdf(studentList);
-        if (success) {
-            System.out.println("SUCCESSFULL");
-            return true;
-        } else {
-            System.out.println("UNSUCCESSFULL");
-            return false;
-        }
+        return success;
     }
 
-    public boolean downloadAllHonorCertificates() {
+    public boolean download_honor_and_high_honor_certificates(String string) {
         List<Transcript> transcriptList = studentAffairRepo.getAllTranscripts();
-        List<Studentt> studentList = new ArrayList<>();
-
-        for (Transcript transcript : transcriptList) {
-            if (transcript.getGpa() >= 3.00 && transcript.getGpa() < 3.50) {
-                Studentt student = studentAffairRepo.getStudentById(transcript.getStudentId());
-                studentList.add(student);
-            }
-        }
-
-        boolean success = HonorGenerator.createHonorCertificates(studentList);
-        
-        if (success) {
-            System.out.println("SUCCESSFULL");
-            return true;
-        } else {
-            System.out.println("UNSUCCESSFULL");
-            return false;
-        }
-    }
-
-    public boolean downloadAllHighHonorCertificates() {
-        List<Transcript> transcriptList = studentAffairRepo.getAllTranscripts();
-        List<Studentt> studentList = new ArrayList<>();
+        List<Studentt> studentList_honor = new ArrayList<>();
+        List<Studentt> studentList_high_honor = new ArrayList<>();
 
         for (Transcript transcript : transcriptList) {
             if (transcript.getGpa() >= 3.50) {
                 Studentt student = studentAffairRepo.getStudentById(transcript.getStudentId());
-                studentList.add(student);
+                if (student != null) {
+                    studentList_high_honor.add(student);
+                }
+            } else if (transcript.getGpa() >= 3.00) {
+                Studentt student = studentAffairRepo.getStudentById(transcript.getStudentId());
+                if (student != null) {
+                    studentList_honor.add(student);
+                }
             }
         }
 
-        boolean success = HighHonorGenerator.createHighHonorCertificates(studentList);
-        
-        if (success) {
-            System.out.println("SUCCESSFULL");
-            return true;
+        if (string.equals("High Honor")) {
+            return HighHonorGenerator.createHighHonorCertificates(studentList_high_honor);
+        } else if (string.equals("Honor")) {
+            return HonorGenerator.createHonorCertificates(studentList_honor);
         } else {
-            System.out.println("UNSUCCESSFULL");
             return false;
         }
     }
 
     public boolean downloadAllBeratCertificates() {
-        
         List<Boolean> bool_array = new ArrayList<>();
-        
-        List<Transcript> transcriptList = studentAffairRepo.getAllTranscripts();
-        List<Double> gpas = new ArrayList<>();
-        List<Studentt> institution_berat = new ArrayList<>();
-
-        for (Transcript transcript : transcriptList) {
-            gpas.add(transcript.getGpa());
-        }
-
-        Collections.sort(gpas, Collections.reverseOrder());
-
-        for (int i = 0; i < 3; i++) {
-            int studentid = studentAffairRepo.getStudentIdByGpa(gpas.get(i));
-            Studentt student = studentAffairRepo.getStudentById(studentid);
-            institution_berat.add(student);
-        }
-
-        boolean success1 = InstitutionBeratGenerator.createBeratCertificates(institution_berat);
-        bool_array.add(success1);
-        
+        List<Boolean> faculty_bool_array = createFacultyBerat();
+        List<Boolean> department_bool_array = createDepartmentBerat();
         List<String> distinctFaculties = studentAffairRepo.getDistinctFaculties();
-        
-        for (String distinctFaculty : distinctFaculties) {
-            List<Studentt> studentList_from_same_faculty = studentAffairRepo.getAllStudentsByFaculty(distinctFaculty);
-            List<Double> new_gpas = new ArrayList<>();
-
-            for (Studentt student : studentList_from_same_faculty) {
-                int studentid = student.getStudentid();
-                new_gpas.add(studentAffairRepo.getGpaById(studentid));
-            }
-            
-            Collections.sort(new_gpas, Collections.reverseOrder());
-
-            List<Studentt> top_three_faculty = new ArrayList<>();
-                        
-            for (int i = 0; i < 3; i++) {
-                double a_gpa = new_gpas.get(i);
-                int student_id = studentAffairRepo.getStudentIdByGpa(a_gpa);
-                Studentt studentt = studentAffairRepo.getStudentById(student_id);
-                top_three_faculty.add(studentt);
-            }
-            
-            boolean successfull = FacultyBeratGenerator.createBeratCertificates(distinctFaculty, top_three_faculty);
-            bool_array.add(successfull);
-        }
-
         List<String> distinctDepartments = studentAffairRepo.getDistinctDepartments();
-        
-        for (String distinctDepartment : distinctDepartments) {
-            List<Studentt> studentList_from_same_department = studentAffairRepo.getAllStudentsByDepartment(distinctDepartment);
-            List<Double> new_gpas2 = new ArrayList<>();
 
-            for (Studentt student : studentList_from_same_department) {
-                int studentid2 = student.getStudentid();
-                new_gpas2.add(studentAffairRepo.getGpaById(studentid2));
-            }
-            
-            Collections.sort(new_gpas2, Collections.reverseOrder());
+        bool_array.add(createInstitutionBerat());
 
-            List<Studentt> top_three_department = new ArrayList<>();
-                        
-            for (int i = 0; i < 3; i++) {
-                double a_gpa2 = new_gpas2.get(i);
-                int student_id2 = studentAffairRepo.getStudentIdByGpa(a_gpa2);
-                Studentt studentt2 = studentAffairRepo.getStudentById(student_id2);
-                top_three_department.add(studentt2);
-            }
-            
-            boolean successfull2 = DepartmentBeratGenerator.createBeratCertificates(distinctDepartment, top_three_department);
-            bool_array.add(successfull2);
+        for (boolean bool_value : faculty_bool_array) {
+            bool_array.add(bool_value);
         }
 
+        for (boolean bool_value : department_bool_array) {
+            bool_array.add(bool_value);
+        }
+        
         List<String> final_zip = new ArrayList<>();
         final_zip.add("instutition_berat_certificates.zip");
 
@@ -167,12 +86,7 @@ public class StudentAffairService {
             final_zip.add(distinctDepartment + "_berat_certificates.zip");
         }
 
-        for (String file_name : final_zip) {
-            System.out.println(file_name);
-        }
-
         createFolder("Berat_Certificates");
-
         Path targetPath = Paths.get("Berat_Certificates");
         
         try {
@@ -189,11 +103,120 @@ public class StudentAffairService {
             e.printStackTrace();
         }
 
-        boolean successful = zipFolder("Berat_Certificates");
-        
-        return successful;
+        boolean success = zipFolder("Berat_Certificates");
+        bool_array.add(success);
+
+        boolean flag = true;
+        for (boolean bool_value : bool_array) {
+            if (!bool_value) {
+                flag = false;
+            }
+        }
+
+        return flag;
     }
     
+    private boolean createInstitutionBerat() {
+        List<Transcript> transcriptList = studentAffairRepo.getAllTranscripts();
+        List<Double> gpas = new ArrayList<>();
+        
+        for (Transcript transcript : transcriptList) {
+            gpas.add(transcript.getGpa());
+        }
+
+        Collections.sort(gpas, Collections.reverseOrder());
+
+        List<Studentt> institution_berat = get_first_three(gpas);
+
+        return InstitutionBeratGenerator.createBeratCertificates(institution_berat);
+    }
+
+    private List<Boolean> createFacultyBerat() {
+        List<String> distinctFaculties = studentAffairRepo.getDistinctFaculties();
+        List<Boolean> bool_array = new ArrayList<>();
+
+        for (String distinctFaculty : distinctFaculties) {
+
+            List<Studentt> studentList_from_same_faculty = studentAffairRepo.getAllStudentsByFaculty(distinctFaculty);
+            List<Double> gpas = new ArrayList<>();
+
+            for (Studentt student : studentList_from_same_faculty) {
+                int studentid = student.getStudentid();
+                double gpa = studentAffairRepo.getGpaById(studentid);
+                if (gpa >= 0.0) {
+                    gpas.add(gpa);
+                }
+            }
+            
+            Collections.sort(gpas, Collections.reverseOrder());
+
+            List<Studentt> top_three_faculty = get_first_three(gpas);
+            
+            boolean success = FacultyBeratGenerator.createBeratCertificates(distinctFaculty, top_three_faculty);
+            bool_array.add(success);
+        }
+
+        return bool_array;
+    }
+
+    private List<Boolean> createDepartmentBerat() {
+        List<String> distinctDepartments = studentAffairRepo.getDistinctDepartments();
+        List<Boolean> bool_array = new ArrayList<>();
+
+        for (String distinctDepartment : distinctDepartments) {
+            List<Studentt> studentList_from_same_department = studentAffairRepo.getAllStudentsByDepartment(distinctDepartment);
+            List<Double> gpas = new ArrayList<>();
+
+            for (Studentt student : studentList_from_same_department) {
+                int studentid = student.getStudentid();
+                double gpa = studentAffairRepo.getGpaById(studentid);
+                if (gpa >= 0) {
+                    gpas.add(gpa);
+                }
+            }
+            
+            Collections.sort(gpas, Collections.reverseOrder());
+
+            List<Studentt> top_three_department = get_first_three(gpas);
+            
+            boolean success = DepartmentBeratGenerator.createBeratCertificates(distinctDepartment, top_three_department);
+            bool_array.add(success);
+        }
+
+        return bool_array;
+    }
+
+    private List<Studentt> get_first_three(List<Double> gpas) {
+        List<Studentt> list_to_return = new ArrayList<>();
+
+        int gpas_size = gpas.size();
+        int threshold = 0;
+        if (gpas_size > 3) {
+            threshold = 3;
+        } else {
+            threshold = gpas_size;
+        }
+
+        for (int i = 0; i < threshold; i++) {
+            List<Integer> studentids = studentAffairRepo.getStudentIdsByGpa(gpas.get(i));
+            int size = studentids.size();
+            if (size == 0) {
+                continue;
+            } else if (size == 1) {
+                int studentid = studentids.get(0);
+                Studentt student = studentAffairRepo.getStudentById(studentid);
+                list_to_return.add(student);
+            } else if (size > 1) {
+                for (int studentid : studentids) {
+                    Studentt student = studentAffairRepo.getStudentById(studentid);
+                    list_to_return.add(student);
+                }
+            }
+        }
+
+        return list_to_return;
+    }
+
     private boolean createFolder(String fileName) {
         String folderName = fileName;
         File folder = new File(folderName);
@@ -261,5 +284,13 @@ public class StudentAffairService {
         }
     }
 
+    public List<Studentt> getApprovedStudents() {
+        try {
+            return studentAffairRepo.getApprovedStudents();
+        } catch (Exception e) {
+            System.err.println("Error while fetching approved students: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
 }
 
