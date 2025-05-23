@@ -31,12 +31,13 @@ public class OzturkService {
     @Autowired
     private JwtUtil jwtUtil;
 
-    public List<String> vievCurriculum(String department) {
+    public List<Map<String, Object>>vievCurriculum(String department) {
         Integer curriculumId = ozturkRepo.takeCurriculumid(department);
         if (curriculumId == null) {
-            return Collections.singletonList("Curriculum does not exist");
+            return Collections.singletonList(Map.of("error", "Curriculum does not exist"));
+
         }
-        List<String> curriculum =ozturkRepo.viewCurriculum(curriculumId);
+        List<Map<String, Object>> curriculum =ozturkRepo.viewCurriculum(curriculumId);
         return curriculum;
         }
 
@@ -54,29 +55,21 @@ public class OzturkService {
         return ozturkRepo.updateGraduationStatusPairs(staffMail, updates);
     }
 
-public boolean findCompletedCurriculumCourses(String studentName, String mail) {
-    System.out.println(">> Başlatıldı: " + studentName + " / " + mail);
-
+public Map<String, Object> findCompletedCurriculumCourses(String studentName, String mail) {
     Long studentId = ozturkRepo.findStudentIdByName(studentName, mail);
-    System.out.println("Student ID: " + studentId);
-
     String department = ozturkRepo.findDepartmentByStudentId(studentId);
-    System.out.println("Department: " + department);
-
     Integer curriculumId = ozturkRepo.takeCurriculumid(department);
-    System.out.println("Curriculum ID: " + curriculumId);
 
-    List<String> curriculumCourses = ozturkRepo.viewCurriculum(curriculumId);
-    System.out.println("Curriculum Courses: " + curriculumCourses);
-
+    List<String> curriculumCourses = ozturkRepo.viewCurriculumByCategory(curriculumId, "mandatory");
     List<String> studentCourses = ozturkRepo.findCourseCodesByStudentId(studentId);
-    System.out.println("Student Courses: " + studentCourses);
 
-    boolean completed = studentCourses.containsAll(curriculumCourses);
-    System.out.println("Curriculum Completed: " + completed);
-
-    return completed;
+    boolean completed = curriculumCourses.containsAll(studentCourses);
+    return Map.of(
+        "studentId", studentId,
+        "completed", completed
+    );
 }
+
 
 
 

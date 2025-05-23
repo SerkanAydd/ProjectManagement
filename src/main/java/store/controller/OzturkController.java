@@ -26,7 +26,7 @@ public class OzturkController {
     @PostMapping("/viewCurriculum")
     public ResponseEntity<?> vievCurriculum(@RequestParam String department) {
         try {
-            List<String> userMap = ozturkService.vievCurriculum(department);
+            List<Map<String, Object>> userMap = ozturkService.vievCurriculum(department);
             return ResponseEntity.ok(userMap);
 
         } catch (IllegalArgumentException e) {
@@ -72,23 +72,22 @@ public ResponseEntity<?> updateApprovalsBulk(
     }
 }
 
-    @GetMapping("/check-transcript/{studentName}/{advisorMail}")
-    public ResponseEntity<Map<String, Object>> checkTransciptCurriculumMatches(@PathVariable String studentName, @PathVariable String advisorMail) {
-        try {
-            boolean completed = ozturkService.findCompletedCurriculumCourses(studentName,advisorMail);
+@GetMapping("/check-transcript/{studentName}/{advisorMail}")
+public ResponseEntity<Map<String, Object>> checkTranscriptCurriculumMatches(
+        @PathVariable String studentName,
+        @PathVariable String advisorMail) {
+    try {
+        Map<String, Object> result = ozturkService.findCompletedCurriculumCourses(studentName, advisorMail);
 
-            return ResponseEntity.ok(Map.of(
-                "studentId", studentName,
-                "curriculumCompleted", completed
-            ));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
-                "error", "Something went wrong",
-                "details", e.getMessage()
-            ));
-        }
+        return ResponseEntity.ok(result);
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+            "error", "Something went wrong",
+            "details", e.getMessage()
+        ));
     }
- 
+}
+
     
 
 }
