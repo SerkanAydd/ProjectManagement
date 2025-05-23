@@ -19,10 +19,18 @@ public class OzturkRepo {
         String sql = "SELECT curriculumid FROM curriculum WHERE department = ?";
         return jdbcTemplate.queryForObject(sql, Integer.class, department);        
     }
-    public List<String> viewCurriculum(int curriculumId){
-        String sql = "SELECT coursecode FROM course_curriculum WHERE curriculumid = ?";
-        return jdbcTemplate.queryForList(sql, String.class, curriculumId);        
-    }
+    
+    public List<Map<String, Object>> viewCurriculum(int curriculumId) {
+    String sql = "SELECT coursecode, category FROM course_curriculum WHERE curriculumid = ?";
+    return jdbcTemplate.queryForList(sql, curriculumId);
+}
+    public List<String> viewCurriculumByCategory(int curriculumId, String category) {
+    String sql = "SELECT coursecode FROM course_curriculum WHERE curriculumid = ? AND category = ?";
+    return jdbcTemplate.queryForList(sql, String.class, curriculumId, category);
+}
+
+
+
 
     public Integer findStaffIdByEmail(String email) {
         String sql = "SELECT id FROM staff WHERE mail = ?";
@@ -69,7 +77,6 @@ public class OzturkRepo {
 
     public Long findStudentIdByName(String studentName, String mail) {
     long staffid =  findStaffIdByEmail(mail);
-    System.out.println("Staffid" +staffid);
     String sql = "SELECT studentid FROM student WHERE name = ? AND staff_id = ?";
     return jdbcTemplate.queryForObject(sql, Long.class, studentName, staffid);
     }

@@ -22,12 +22,13 @@ public class OzturkService {
     @Autowired
     private JwtUtil jwtUtil;
 
-    public List<String> vievCurriculum(String department) {
+    public List<Map<String, Object>>vievCurriculum(String department) {
         Integer curriculumId = ozturkRepo.takeCurriculumid(department);
         if (curriculumId == null) {
-            return Collections.singletonList("Curriculum does not exist");
+            return Collections.singletonList(Map.of("error", "Curriculum does not exist"));
+
         }
-        List<String> curriculum =ozturkRepo.viewCurriculum(curriculumId);
+        List<Map<String, Object>> curriculum =ozturkRepo.viewCurriculum(curriculumId);
         return curriculum;
         }
 
@@ -45,22 +46,22 @@ public class OzturkService {
         return ozturkRepo.updateGraduationStatusPairs(staffMail, updates);
     }
 
-public boolean findCompletedCurriculumCourses(String studentName, String mail) {
 
+public Map<String, Object> findCompletedCurriculumCourses(String studentName, String mail) {
     Long studentId = ozturkRepo.findStudentIdByName(studentName, mail);
-
     String department = ozturkRepo.findDepartmentByStudentId(studentId);
-
     Integer curriculumId = ozturkRepo.takeCurriculumid(department);
 
-    List<String> curriculumCourses = ozturkRepo.viewCurriculum(curriculumId);
-
+    List<String> curriculumCourses = ozturkRepo.viewCurriculumByCategory(curriculumId, "mandatory");
     List<String> studentCourses = ozturkRepo.findCourseCodesByStudentId(studentId);
 
-    boolean completed = studentCourses.containsAll(curriculumCourses);
-
-    return completed;
+    boolean completed = curriculumCourses.containsAll(studentCourses);
+    return Map.of(
+        "studentId", studentId,
+        "completed", completed
+    );
 }
+
 
 
 
