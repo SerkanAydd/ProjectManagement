@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-
 @Repository
 public class UserRepo {
 
@@ -119,8 +118,7 @@ public class UserRepo {
         }
     }
 
-    private String getStudentFaculty(String mail)
-    {
+    private String getStudentFaculty(String mail) {
         String sql = "SELECT faculty FROM student WHERE mail = ?";
         try {
             return jdbcTemplate.queryForObject(sql, String.class, mail);
@@ -129,8 +127,7 @@ public class UserRepo {
         }
     }
 
-    private String getStaffFaculty(String mail)
-    {
+    private String getStaffFaculty(String mail) {
         String sql = "SELECT faculty FROM staff WHERE mail = ?";
         try {
             return jdbcTemplate.queryForObject(sql, String.class, mail);
@@ -139,8 +136,7 @@ public class UserRepo {
         }
     }
 
-    public String getFaculty(String mail)
-    {
+    public String getFaculty(String mail) {
         String faculty = getStudentFaculty(mail);
 
         if (faculty == null) {
@@ -150,8 +146,7 @@ public class UserRepo {
         return faculty;
     }
 
-    private String getStudentDepartment(String mail)
-    {
+    private String getStudentDepartment(String mail) {
         String sql = "SELECT department FROM student WHERE mail = ?";
         try {
             return jdbcTemplate.queryForObject(sql, String.class, mail);
@@ -160,8 +155,7 @@ public class UserRepo {
         }
     }
 
-    private String getStaffDepartment(String mail)
-    {
+    private String getStaffDepartment(String mail) {
         String sql = "SELECT department FROM staff WHERE mail = ?";
         try {
             return jdbcTemplate.queryForObject(sql, String.class, mail);
@@ -170,8 +164,7 @@ public class UserRepo {
         }
     }
 
-    public String getDepartment(String mail)
-    {
+    public String getDepartment(String mail) {
         String department = getStudentDepartment(mail);
 
         if (department == null) {
@@ -181,7 +174,7 @@ public class UserRepo {
         return department;
     }
 
-    public boolean register_student(int id, String mail, String name, String faculty, String department, String password) {
+    public boolean register_student(String studentno, String mail, String name, String faculty, String department, String password) {
         String sql = "INSERT INTO student (studentid, password, faculty, department, startDate, mail, name, graduationstatus, staff_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         String sql_ = "SELECT id FROM staff WHERE title = ?";
         List<String> advisorid_list = null;
@@ -197,8 +190,13 @@ public class UserRepo {
         int randomAdvisor = Integer.parseInt(random_Advisor);
 
         try {
-            int rowsAffected = jdbcTemplate.update(sql, id, password, faculty, department, Date.valueOf("2021-05-31"), mail, name, "Active", randomAdvisor);
+            // Convert string studentno to integer for database insertion
+            int studentId = Integer.parseInt(studentno);
+            int rowsAffected = jdbcTemplate.update(sql, studentId, password, faculty, department, Date.valueOf("2021-05-31"), mail, name, "Active", randomAdvisor);
             return rowsAffected > 0;
+        } catch (NumberFormatException e) {
+            System.err.println("Invalid student number format: " + studentno);
+            return false;
         } catch (Exception e) {
             e.printStackTrace(); // You can log or handle this more appropriately
             return false;
@@ -232,6 +230,21 @@ public class UserRepo {
         // COALESCE ensures we get 0 instead of null when the table is empty
         String sql = "SELECT COALESCE(MAX(studentid), 0) FROM student";
         return jdbcTemplate.queryForObject(sql, Integer.class);
+    }
+
+    public boolean isStudentNoExists(String studentno) {
+        String sql = "SELECT COUNT(*) FROM student WHERE studentid = ?";
+        try {
+            // Convert string studentno to integer for database query
+            int studentId = Integer.parseInt(studentno);
+            Integer count = jdbcTemplate.queryForObject(sql, Integer.class, studentId);
+            return count != null && count > 0;
+        } catch (NumberFormatException e) {
+            System.err.println("Invalid student number format: " + studentno);
+            return false;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
 }

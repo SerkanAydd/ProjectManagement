@@ -121,6 +121,7 @@ public Map<String, Object> findCompletedCurriculumCourses(String studentName, St
     completed = completed && socialMatch && techMatch;
     System.out.println("Curriculum Completed: " + completed);
 
+
     return Map.of(
         "studentId", studentId,
         "completed", completed

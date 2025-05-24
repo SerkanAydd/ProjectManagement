@@ -32,41 +32,51 @@ public class AuthService {
 
     // PendingRegistration: mail → bilgiler + hashed password
     static class PendingRegistration {
+
         String name;
         String faculty;
         String department;
         String hashedPassword;
+        String studentno;
 
-        public PendingRegistration(String name, String faculty, String department, String hashedPassword) {
+        public PendingRegistration(String name, String faculty, String department, String hashedPassword, String studentno) {
             this.name = name;
             this.faculty = faculty;
             this.department = department;
             this.hashedPassword = hashedPassword;
+            this.studentno = studentno;
         }
     }
 
-    public Map<String, String> initiateStudentRegistration(String mail, String name, String faculty, String department, String password) {
+    public Map<String, String> initiateStudentRegistration(String mail, String name, String faculty, String department, String password, String studentno) {
         Map<String, String> response = new HashMap<>();
 
-        // 1. Mail, tanımlı öğrenci listesinde mi?
+        // 1. Check if studentno is already taken
+        if (userInfo.isStudentNoExists(studentno)) {
+            response.put("Successful", "False");
+            response.put("Message", "Student number already exists.");
+            return response;
+        }
+
+        // 2. Mail, tanımlı öğrenci listesinde mi?
         if (!isMailInStudentList(mail)) {
             response.put("Successful", "False");
             response.put("Message", "Email not eligible for registration (not in student list).");
             return response;
         }
 
-        // 2. Zaten kayıtlı mı?
+        // 3. Zaten kayıtlı mı?
         if (userInfo.getId(mail) != null) {
             response.put("Successful", "False");
             response.put("Message", "User already registered.");
             return response;
         }
 
-        // 3. Hashle ve geçici kayıt için sakla
+        // 4. Hashle ve geçici kayıt için sakla
         String hashedPassword = passwordEncoder.encode(password);
-        pendingStudentRegistrations.put(mail, new PendingRegistration(name, faculty, department, hashedPassword));
+        pendingStudentRegistrations.put(mail, new PendingRegistration(name, faculty, department, hashedPassword, studentno));
 
-        // 4. Kod üret ve mail gönder
+        // 5. Kod üret ve mail gönder
         String code = verificationTokenService.generateCode(mail);
         emailService.sendVerificationCode(mail, code);
 
@@ -74,7 +84,6 @@ public class AuthService {
         response.put("Message", "Verification code sent to email.");
         return response;
     }
-
 
     public Map<String, String> completeStudentRegistration(String mail, String code) {
         Map<String, String> response = new HashMap<>();
@@ -92,8 +101,7 @@ public class AuthService {
             return response;
         }
 
-        int id = userInfo.findMaxStudentId() + 1;
-        boolean success = userInfo.register_student(id, mail, pending.name, pending.faculty, pending.department, pending.hashedPassword);
+        boolean success = userInfo.register_student(pending.studentno, mail, pending.name, pending.faculty, pending.department, pending.hashedPassword);
 
         if (success) {
             response.put("Successful", "True");
@@ -121,10 +129,10 @@ public class AuthService {
         return false;
     }
 
-
     private final Map<String, PendingStaffRegistration> pendingStaffRegistrations = new HashMap<>();
 
     static class PendingStaffRegistration {
+
         String name;
         String title;
         String faculty;
@@ -190,7 +198,6 @@ public class AuthService {
         return response;
     }
 
-
     public Map<String, String> authenticateUser(String mail, String password) {
         System.out.println(new BCryptPasswordEncoder().encode("itispassword"));
         Map<String, String> response = new HashMap<>();
@@ -236,9 +243,16 @@ public class AuthService {
         return jwtUtil.isTokenValid(token, extractedMail);
     }
 
-    public Map<String, String> register_student(String mail, String name, String faculty, String department, String password) {
+    public Map<String, String> register_student(String mail, String name, String faculty, String department, String password, String studentno) {
         Resource resource = new ClassPathResource("student_emails.txt");
         Map<String, String> registerMessage = new HashMap<>();
+
+        // Check if studentno is already taken
+        if (userInfo.isStudentNoExists(studentno)) {
+            registerMessage.put("Successful", "False");
+            registerMessage.put("Message", "Student number already exists.");
+            return registerMessage;
+        }
 
         try (BufferedReader br = new BufferedReader(new InputStreamReader(resource.getInputStream()))) {
             String line;
@@ -249,9 +263,8 @@ public class AuthService {
                         registerMessage.put("Message", "User already registered.");
                         return registerMessage;
                     } else {
-                        int id = userInfo.findMaxStudentId() + 1;
                         String hashedPassword = passwordEncoder.encode(password);
-                        userInfo.register_student(id, mail, name, faculty, department, hashedPassword);
+                        userInfo.register_student(studentno, mail, name, faculty, department, hashedPassword);
                         registerMessage.put("Successful", "True");
                         registerMessage.put("Message", "User successfully registered.");
                         return registerMessage;
@@ -266,6 +279,7 @@ public class AuthService {
         registerMessage.put("Message", "User mail is not in database");
         return registerMessage;
     }
+
     private boolean isMailInStudentList(String mail) {
         Resource resource = new ClassPathResource("student_emails.txt");
         try (BufferedReader br = new BufferedReader(new InputStreamReader(resource.getInputStream()))) {
@@ -338,5 +352,5 @@ public class AuthService {
         registerMessage.put("Message", "User mail is not in database");
         return registerMessage;
 
-
-}}
+    }
+}
