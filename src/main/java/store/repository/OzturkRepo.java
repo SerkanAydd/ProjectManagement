@@ -3,10 +3,15 @@ package store.repository;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+
+
 
 
 @Repository
@@ -65,10 +70,21 @@ public class OzturkRepo {
         return totalUpdated;
     }   
 
-    public List<String> findCourseCodesByStudentId(Long studentId) {
-        String sql = "SELECT coursecode FROM course_transcript WHERE studentid = ?";
-        return jdbcTemplate.queryForList(sql, String.class, studentId);
+public List<String> findCourseCodesByStudentId(Long studentId) {
+    String sql = "SELECT courses FROM transcript WHERE studentid = ?";
+    String raw = jdbcTemplate.queryForObject(sql, String.class, studentId);
+
+    if (raw != null && !raw.isBlank()) {
+        return Arrays.stream(raw.split(","))
+            .map(s -> s.trim().toUpperCase())  // boşlukları temizle, büyük harfe çevir
+            .collect(Collectors.toList());
+    } else {
+        return Collections.emptyList();
     }
+}
+
+
+
 
     public String findDepartmentByStudentId(Long studentId) {
         String sql = "SELECT department FROM student WHERE studentid = ?";
@@ -80,6 +96,17 @@ public class OzturkRepo {
     String sql = "SELECT studentid FROM student WHERE name = ? AND staff_id = ?";
     return jdbcTemplate.queryForObject(sql, Long.class, studentName, staffid);
     }
+
+    public Map<String, Integer> takeTechElectiveAndSocialElective(String department) {
+        String sql = "SELECT tech_elective_count, social_elective_count FROM curriculum WHERE department = ?";
+        return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> {
+            Map<String, Integer> result = new HashMap<>();
+            result.put("tech_elective_count", rs.getInt("tech_elective_count"));
+            result.put("social_elective_count", rs.getInt("social_elective_count"));
+            return result;
+        }, department);
+    }
+
 
 
 
