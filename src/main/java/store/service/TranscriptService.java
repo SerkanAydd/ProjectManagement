@@ -1,9 +1,10 @@
 package store.service;
-
+import store.entity.Transcriptt;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.time.LocalDate;
-
+import java.util.List;
+import java.util.ArrayList;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,6 +83,21 @@ public class TranscriptService {
             }
         } catch (Exception e) {
             throw new RuntimeException("Failed to save transcript data to database: " + e.getMessage());
+        }
+    }
+    public List<Transcriptt> getAllTranscripts() {
+        try {
+            List<Transcriptt> transcripts = transcriptRepo.getAllTranscripts();
+
+            // İlk 3 transcript'i yazdır
+            for (int i = 0; i < Math.min(3, transcripts.size()); i++) {
+                System.out.println("Transcript " + (i + 1) + ": " + transcripts.get(i));
+            }
+            return transcripts;
+        } catch (Exception e) {
+            // Hata durumunda loglama yapılabilir
+            System.err.println("Error while fetching transcripts: " + e.getMessage());
+            return new ArrayList<>(); // Boş liste dönerek uygulamanın çökmesini engeller
         }
     }
 }
