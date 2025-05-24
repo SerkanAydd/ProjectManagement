@@ -72,12 +72,11 @@ public ResponseEntity<?> updateApprovalsBulk(
     }
 }
 
-@GetMapping("/check-transcript/{studentName}/{advisorMail}")
+@GetMapping("/check-transcript/{studentNo}")
 public ResponseEntity<Map<String, Object>> checkTranscriptCurriculumMatches(
-        @PathVariable String studentName,
-        @PathVariable String advisorMail) {
+        @PathVariable Long studentNo) {
     try {
-        Map<String, Object> result = ozturkService.findCompletedCurriculumCourses(studentName, advisorMail);
+        Map<String, Object> result = ozturkService.findCompletedCurriculumCourses(studentNo);
 
         return ResponseEntity.ok(result);
     } catch (Exception e) {

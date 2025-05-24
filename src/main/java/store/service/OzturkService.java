@@ -55,8 +55,7 @@ public class OzturkService {
         return ozturkRepo.updateGraduationStatusPairs(staffMail, updates);
     }
 
-public Map<String, Object> findCompletedCurriculumCourses(String studentName, String mail) {
-    Long studentId = ozturkRepo.findStudentIdByName(studentName, mail);
+public Map<String, Object> findCompletedCurriculumCourses(Long studentId) {
     System.out.println("Student ID: " + studentId);
 
     String department = ozturkRepo.findDepartmentByStudentId(studentId);
