@@ -1,4 +1,5 @@
 package store.controller;
+
 import store.entity.Transcript;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,15 +35,17 @@ public class AuthController {
             ));
         }
     }
+
     @PostMapping("/register_student/initiate")
     public ResponseEntity<?> initiateRegisterStudent(
             @RequestParam String mail,
             @RequestParam String name,
             @RequestParam String faculty,
             @RequestParam String department,
-            @RequestParam String password) {
+            @RequestParam String password,
+            @RequestParam String studentno) {
 
-        Map<String, String> response = authService.initiateStudentRegistration(mail, name, faculty, department, password);
+        Map<String, String> response = authService.initiateStudentRegistration(mail, name, faculty, department, password, studentno);
         return "Pending".equals(response.get("Successful"))
                 ? ResponseEntity.ok(response)
                 : ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
@@ -85,13 +88,12 @@ public class AuthController {
                 : ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
-
-
     @PostMapping("/validate-token")
     public boolean validateToken(String authHeader) {
         String token = authHeader.replace("Bearer ", "");
         return authService.isTokenValid(token);
     }
+
     @PostMapping("/send-verification-code")
     public ResponseEntity<?> sendVerificationCode(@RequestParam String mail) {
         Map<String, String> response = authService.sendVerificationCode(mail);
@@ -118,9 +120,10 @@ public class AuthController {
             @RequestParam String name,
             @RequestParam String faculty,
             @RequestParam String department,
-            @RequestParam String password) {
+            @RequestParam String password,
+            @RequestParam String studentno) {
 
-        Map<String, String> response = authService.register_student(mail, name, faculty, department, password);
+        Map<String, String> response = authService.register_student(mail, name, faculty, department, password, studentno);
 
         if ("True".equals(response.get("Successful"))) {
             return ResponseEntity.ok(response);
@@ -146,5 +149,5 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
-}
+    }
 }
