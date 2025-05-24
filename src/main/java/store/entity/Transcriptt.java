@@ -1,22 +1,33 @@
 package store.entity;
 
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDate;
-
-
 
 public class Transcriptt {
 
-
+    @JsonProperty("studentId")
     private int studentId;
+    
+    @JsonProperty("courses")
     private String courses;
+    
+    @JsonProperty("totalCredits")
     private int totalCredits;
+    
+    @JsonProperty("gpa")
     private double gpa;
+    
+    @JsonProperty("date")
     private LocalDate date;
+    
+    @JsonProperty("semesterNum")
     private int semesterNum;
 
+    // Default constructor for JSON serialization
+    public Transcriptt() {
+    }
 
-
+    // Parameterized constructor
     public Transcriptt(int studentId, String courses, int totalCredits, double gpa, LocalDate date, int semesterNum) {
         this.studentId = studentId;
         this.courses = courses;

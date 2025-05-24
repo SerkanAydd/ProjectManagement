@@ -20,9 +20,13 @@ import org.springframework.web.multipart.MultipartFile;
 import store.model.ParsedTranscript;
 import store.repository.TranscriptRepo;
 import store.util.TranscriptParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class TranscriptService {
+
+    private static final Logger logger = LoggerFactory.getLogger(TranscriptService.class);
 
     @Autowired
     private TranscriptRepo transcriptRepo;
@@ -276,17 +280,25 @@ public class TranscriptService {
 
     public List<Transcriptt> getAllTranscripts() {
         try {
+            logger.info("Fetching all transcripts from database");
             List<Transcriptt> transcripts = transcriptRepo.getAllTranscripts();
-
-            // İlk 3 transcript'i yazdır
+            
+            logger.info("Successfully retrieved {} transcripts from database", transcripts.size());
+            
+            // Log first 3 transcripts for debugging (without sensitive data)
             for (int i = 0; i < Math.min(3, transcripts.size()); i++) {
-                System.out.println("Transcript " + (i + 1) + ": " + transcripts.get(i));
+                logger.debug("Transcript {}: StudentID={}, Courses={}, GPA={}", 
+                    (i + 1), 
+                    transcripts.get(i).getStudentId(),
+                    transcripts.get(i).getCourses().length(),
+                    transcripts.get(i).getGpa());
             }
+            
             return transcripts;
+            
         } catch (Exception e) {
-            // Hata durumunda loglama yapılabilir
-            System.err.println("Error while fetching transcripts: " + e.getMessage());
-            return new ArrayList<>(); // Boş liste dönerek uygulamanın çökmesini engeller
+            logger.error("Error while fetching transcripts from database: {}", e.getMessage(), e);
+            throw e; // Re-throw the exception to let the controller handle it properly
         }
     }
 }

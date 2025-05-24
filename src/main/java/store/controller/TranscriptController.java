@@ -10,12 +10,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.dao.DataAccessException;
+import org.springframework.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import store.service.TranscriptService;
 
 @RestController
 @RequestMapping("/api")
 public class TranscriptController {
+
+    private static final Logger logger = LoggerFactory.getLogger(TranscriptController.class);
 
     @Autowired
     private TranscriptService transcriptService;
@@ -54,13 +60,35 @@ public class TranscriptController {
     }
 
     @PostMapping("/view_transcript")
-    public ResponseEntity<List<Transcriptt>> viewTranscripts() {
-        List<Transcriptt> transcripts = transcriptService.getAllTranscripts();
+    public ResponseEntity<?> viewTranscripts() {
+        try {
+            logger.info("Attempting to retrieve all transcripts");
+            
+            List<Transcriptt> transcripts = transcriptService.getAllTranscripts();
+            
+            if (transcripts == null) {
+                logger.warn("TranscriptService returned null for getAllTranscripts()");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error: Unable to retrieve transcripts - service returned null");
+            }
 
-        if (transcripts.isEmpty()) {
-            return ResponseEntity.noContent().build(); // 204 No Content
-        } else {
+            if (transcripts.isEmpty()) {
+                logger.info("No transcripts found in database");
+                return ResponseEntity.noContent().build(); // 204 No Content
+            }
+            
+            logger.info("Successfully retrieved {} transcripts", transcripts.size());
             return ResponseEntity.ok(transcripts); // 200 OK + data
+            
+        } catch (DataAccessException e) {
+            logger.error("Database error while retrieving transcripts: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error: Database connection or query failed - " + e.getMessage());
+                
+        } catch (Exception e) {
+            logger.error("Unexpected error while retrieving transcripts: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error: Unexpected server error - " + e.getMessage());
         }
     }
 }
