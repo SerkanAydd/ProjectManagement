@@ -65,3 +65,4 @@ secretarytest11@iyte.edu.tr
 secretarytest12@iyte.edu.tr
 studentaffairtest11@iyte.edu.tr
 studentaffairtest12@iyte.edu.tr
+studentaffairtest13@iyte.edu.tr
